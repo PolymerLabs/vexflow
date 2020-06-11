@@ -80,7 +80,7 @@ export class VFVoice extends HTMLElement {
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
 
-    this.addSlur(staveNotes);
+    // this.addSlur(staveNotes);
     return staveNotes;
   }
 

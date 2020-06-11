@@ -6,28 +6,31 @@
     <script type="module" src='./wc-src/vf-stave.js'></script>
     <script type="module" src='./wc-src/vf-voice.js'></script>
     <script type="module" src='./wc-src/vf-tuplet.js'></script>
+    <script type="module" src='./wc-src/vf-curve.js'></script>
   </head>
   <body>
-    <!-- <div id="boo"></div> -->
-    <!-- <script type="module" src="./app.js"></script> -->
+    <!-- <div id="boo"></div>
+    <script type="module" src="./app.js"></script> -->
     <vf-score>
       <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
         <!-- <vf-voice clef='treble' stem='up' generateBeams>C5/q, (C4 Eb4 G4)/q, A4, G4/16, A4, B4, C5</vf-voice> -->
         <vf-voice stem='up'>
-          C#5/q, B4, B4
-          <vf-tuplet stem='up'>A4/8, E4, C4</vf-tuplet>
+          C#5/q[id='here'], B4, B4
+          <vf-tuplet stem='up'>A4/8, E4[id='there'], C4</vf-tuplet>
         </vf-voice>
+        <vf-curve from='here' to='there'></vf-curve>
       </vf-stave>
     </vf-score>
 
-    <vf-score>
+    <!-- <vf-score>
       <vf-stave clef='treble' timeSig='3/8'>
         <vf-voice stem='up'>
-          <vf-tuplet beamed stem='up'>B4/16, A4, G4</vf-tuplet>
-          <vf-tuplet beamed stem='down'>A4/8, F4, A4, F4, A4, F4, G4</vf-tuplet>
-          <vf-curve from to></vf-curve>
+          <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
+          <vf-tuplet beamed stem='down'>A4/8, F4, A4, F4, A4, F4</vf-tuplet>
         </vf-voice>
+        <vf-voice stem='up'>d5/4, e5/8[id='end']</vf-voice>
+        <vf-curve from='start' to='end'></vf-curve>
       </vf-stave>
-    </vf-score>
+    </vf-score> -->
   </body>
 </html>

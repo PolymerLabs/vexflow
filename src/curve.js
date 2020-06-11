@@ -47,6 +47,7 @@ export class Curve extends Element {
   }
 
   setNotes(from, to) {
+    console.log(from);
     if (!from && !to) {
       throw new Vex.RuntimeError(
         'BadArguments', 'Curve needs to have either first_note or last_note set.'

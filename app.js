@@ -9,20 +9,21 @@ var vf = new VF.Factory({renderer: {elementId: 'boo'}});
 var score = vf.EasyScore();
 var system = vf.System();
 
+score.set({
+  time: '3/8'
+});
+
 
 system.addStave({
   voices: [
     score.voice(
-      score.notes('C#5/q, B4, B4')
+      score.tuplet(score.beam((score.notes('B4/16, A4, G4', {stem: 'down'}))))
         .concat(
-          score.tuplet((score.notes('A4/8, E4, C4'))))
-    )
+          score.tuplet(score.beam((score.notes('A4/8, F4, A4, F4, A4, F4, G4', {stem: 'down'})))))
+    ),
+    score.voice(score.notes('c5/8, e5, e5'))
   ]
-}).addClef('treble').addTimeSignature('4/4');
+}).addClef('treble').addTimeSignature('3/8');
 
 vf.draw();
-
-score.voice(score.notes('C#5/q, (C#4 Eb4 Gn4)/q, A4').concat(score.beam(score.notes('G4/16, G4, G4, G4'))));
-
- vf.draw();
  

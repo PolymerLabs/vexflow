@@ -22,7 +22,9 @@ export class VFStave extends HTMLElement {
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
     this.addEventListener('getFactoryScore', this.getFactoryScore);
+    this.addEventListener('getFactoryScoreFromCurve', this.getFactoryScoreFromCurve);
     this.addEventListener('notesCreated', this.addVoice);
+    this.addEventListener('curveCreated', this.addCurve);
 
     console.log('vf-stave constructor')
   }
@@ -73,6 +75,7 @@ export class VFStave extends HTMLElement {
       this.stave.addKeySignature(this.keySig);
     }
     
+    // this.vf.stave = this.stave;
     this.stave.draw();
   }
 
@@ -116,10 +119,20 @@ export class VFStave extends HTMLElement {
     e.detail.factory = this.vf;
   }
 
+  getFactoryScoreFromCurve = (e) => {
+    e.detail.factoryScore = this.score;
+    e.detail.factory = this.vf;
+    console.log('getFactoryScoreFromCurve received');
+  }
+
   // testing creating a slur
   // addSlur(notes) {
   //   this.vf.Curve({ from:notes[0], to: notes[5] });
   // }
+  addCurve = () => {
+    console.log('addCurve received');
+    this.vf.draw();
+  }
 
 }
 
