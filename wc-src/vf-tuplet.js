@@ -12,7 +12,7 @@ export class VFTuplet extends HTMLElement {
   connectedCallback() {
     this.notesOccupied = this.getAttribute('notesOccupied');
     this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem');
+    this.stemDirection = this.getAttribute('stem') || this.stemDirection; 
     this.notesText = this.textContent;
 
     const getFactoryScoreEvent = new CustomEvent('getFactoryScore', { bubbles: true, detail: { factoryScore: null, factory: null } });
@@ -25,7 +25,11 @@ export class VFTuplet extends HTMLElement {
   createTuplet() {
     this.createNotes(this.notesText, this.stemDirection);
 
-    this.tuplet = this.score.tuplet(this.notes, { notes_occupied: this.notesOccupied, bracketed: !this.beamed});
+    this.tuplet = this.score.tuplet(this.notes, 
+      { notes_occupied: this.notesOccupied, 
+        bracketed: !this.beamed,
+        location: this.stemDirection === 'down' ? -1 : 1
+      });
     
     if (this.beamed) {
       this.createBeam();

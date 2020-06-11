@@ -79,6 +79,8 @@ export class VFVoice extends HTMLElement {
   createNotes(line, stemDirection) {
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
+
+    this.addSlur(staveNotes);
     return staveNotes;
   }
 
@@ -88,6 +90,11 @@ export class VFVoice extends HTMLElement {
       this.vf.renderQ.push(beam);
     })
     return beams;
+  }
+
+  // testing creating a slur
+  addSlur(notes) {
+    this.vf.Curve({ from: notes[0], to: notes[2] });
   }
 }
 

@@ -97,10 +97,11 @@ export class VFStave extends HTMLElement {
 
   createVoiceFromNotes(staveNotes) {
     return this.score.voice(staveNotes);
-    
   }
 
   formatAndDrawVoices() {
+    // this.addSlur(notes);
+
     var formatter = new Vex.Flow.Formatter()
     formatter.joinVoices(this.voices);
     formatter.formatToStave(this.voices, this.stave);
@@ -114,6 +115,11 @@ export class VFStave extends HTMLElement {
     e.detail.factoryScore = this.score;
     e.detail.factory = this.vf;
   }
+
+  // testing creating a slur
+  // addSlur(notes) {
+  //   this.vf.Curve({ from:notes[0], to: notes[5] });
+  // }
 
 }
 
