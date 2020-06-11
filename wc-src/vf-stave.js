@@ -1,6 +1,5 @@
 import Vex from '../src/index.js';
 import './vf-score';
-import './vf-voice';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -22,7 +21,8 @@ export class VFStave extends HTMLElement {
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-    this.addEventListener('voiceAdded', this.voiceAdded);
+    this.addEventListener('getFactoryScore', this.getFactoryScore);
+    this.addEventListener('notesCreated', this.addVoice);
 
     console.log('vf-stave constructor')
   }
@@ -32,20 +32,35 @@ export class VFStave extends HTMLElement {
     this.timeSig = this.getAttribute('timeSig');
     this.keySig = this.getAttribute('keySig');
 
+    this.setupFactory();
     this.setupStave();
-    this.setupFactoryScore();
 
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.onSlotChange);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.voicesRegistered);
     console.log('vf-stave connectedCallback')
   }
 
-  setupStave() { // add attributes for size? 
-    this.stave = new Vex.Flow.Stave(10, 40, 400);
+  setupFactory() {
+    this.vf = new Vex.Flow.Factory({renderer: {elementId: null}});
+
     const getContextEvent = new CustomEvent('getContext', { bubbles: true, detail: {context: null } });
     this.dispatchEvent(getContextEvent);
     this.context = getContextEvent.detail.context;
+
+    this.vf.setContext(this.context);
+    
+    this.score = this.vf.EasyScore();
+    this.score.set({
+      clef: this.clef,
+      time: this.timeSig
+    });
+  }
+
+  setupStave() { // add attributes for stave size?  
+    this.stave = this.vf.Stave( { x: 10, y: 40, width: 400 });
     this.stave.setContext(this.context);
 
+    // change so attributes always need to be provided but not necessarily rendered? 
+    // or add the clef component back, if clef component then render? 
     if (this.clef) {
       this.stave.addClef(this.clef);
     }
@@ -61,66 +76,43 @@ export class VFStave extends HTMLElement {
     this.stave.draw();
   }
 
-  setupFactoryScore() {
-    var vf = new Vex.Flow.Factory({renderer: {elementId: null}});
-    vf.stave = this.stave
-    this.score = vf.EasyScore();
-    this.score.set({
-      clef: this.clef,
-      time: this.timeSig
-    });
+  voicesRegistered = () => {
+    const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
+    this.numVoices = voiceSlots.length;
   }
 
-  onSlotChange = () => {
-    const slotElements = this.shadowRoot.querySelector('slot').assignedElements();
-    // Generate all voices first, then draw to make sure alignment is correct
-    slotElements.forEach( element => {
-      if (element.nodeName === 'VF-VOICE') {
-        this.addVoice(element);
-      }
-    });
-    this.formatAndDrawVoices();
-  }
+  addVoice = (e) => {
+    const notes = e.detail.notes;
+    const beams = e.detail.beams; 
+    const voice = this.createVoiceFromNotes(notes);
 
-  addVoice(vfVoice) {
-    this.clef = vfVoice.clef;
-
-    // With parser
-    const results = this.createNotesAndVoice(vfVoice.notesText, vfVoice.stem);
-    const staveNotes = results[0];
-    const voice = results[1];
-    console.log('parsed voice (hopefully)');
-    console.log(voice);
     this.voices.push(voice);
-    
-    if (vfVoice.generateBeams) {
-      this.beams = this.beams.concat(this.createBeams(staveNotes)); 
-      console.log(this.beams);
+    this.beams = this.beams.concat(beams);
+
+    // Make sure all voices are created first, then format & draw to make sure alignment is correct
+    if (this.voices.length === this.numVoices) {
+      this.formatAndDrawVoices();
     }
   }
 
-  createNotesAndVoice(line, stemDirection) {
-    this.score.set({ stem: stemDirection });
-
-    const staveNotes = this.score.notes(line);
-    const voice = this.score.voice(staveNotes);
-    return [staveNotes, voice];
-  }
-
-  createBeams(notes) {
-    console.log(notes);
-    const beams = Vex.Flow.Beam.generateBeams(notes);
-    console.log(beams);
-    return beams;
+  createVoiceFromNotes(staveNotes) {
+    return this.score.voice(staveNotes);
+    
   }
 
   formatAndDrawVoices() {
     var formatter = new Vex.Flow.Formatter()
     formatter.joinVoices(this.voices);
     formatter.formatToStave(this.voices, this.stave);
-    this.voices.forEach(voice => voice.draw(this.context, this.stave));
 
-    this.beams.forEach(beam => beam.setContext(this.context).draw());
+    // this.voices.forEach(voice => voice.draw(this.context, this.stave));
+    // this.beams.forEach(beam => beam.setContext(this.context).draw());
+    this.vf.draw();
+  }
+
+  getFactoryScore = (e) => {
+    e.detail.factoryScore = this.score;
+    e.detail.factory = this.vf;
   }
 
 }
