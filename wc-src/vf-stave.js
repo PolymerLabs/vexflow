@@ -13,18 +13,12 @@ export class VFStave extends HTMLElement {
     // Defaults
     this.voices = [];
     this.beams = [];
-    // this.notes = [];
-    // this.timeSig = '4/4';
-    // this.clef = 'treble';
-    // this.keySig = 'C';
 
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-    this.addEventListener('getFactoryScore', this.getFactoryScore);
-    this.addEventListener('getFactoryScoreFromCurve', this.getFactoryScoreFromCurve);
+    this.addEventListener('getScore', this.getScore);
     this.addEventListener('notesCreated', this.addVoice);
-    this.addEventListener('curveCreated', this.addCurve);
 
     console.log('vf-stave constructor')
   }
@@ -34,32 +28,25 @@ export class VFStave extends HTMLElement {
     this.timeSig = this.getAttribute('timeSig');
     this.keySig = this.getAttribute('keySig');
 
-    this.setupFactory();
+    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
+    this.dispatchEvent(getFactoryEvent);
+    this.vf = getFactoryEvent.detail.factory;
+
     this.setupStave();
 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.voicesRegistered);
     console.log('vf-stave connectedCallback')
   }
 
-  setupFactory() {
-    this.vf = new Vex.Flow.Factory({renderer: {elementId: null}});
-
-    const getContextEvent = new CustomEvent('getContext', { bubbles: true, detail: {context: null } });
-    this.dispatchEvent(getContextEvent);
-    this.context = getContextEvent.detail.context;
-
-    this.vf.setContext(this.context);
-    
+  setupStave() { // add attributes for stave size?  
     this.score = this.vf.EasyScore();
     this.score.set({
       clef: this.clef,
       time: this.timeSig
     });
-  }
 
-  setupStave() { // add attributes for stave size?  
-    this.stave = this.vf.Stave( { x: 10, y: 40, width: 400 });
-    this.stave.setContext(this.context);
+    this.stave = this.vf.Stave( { x: 10, y: 40, width: 400 }); // also sets this.vf.stave = this.stave
+    this.stave.setContext(this.vf.context);
 
     // change so attributes always need to be provided but not necessarily rendered? 
     // or add the clef component back, if clef component then render? 
@@ -75,7 +62,6 @@ export class VFStave extends HTMLElement {
       this.stave.addKeySignature(this.keySig);
     }
     
-    // this.vf.stave = this.stave;
     this.stave.draw();
   }
 
@@ -103,8 +89,6 @@ export class VFStave extends HTMLElement {
   }
 
   formatAndDrawVoices() {
-    // this.addSlur(notes);
-
     var formatter = new Vex.Flow.Formatter()
     formatter.joinVoices(this.voices);
     formatter.formatToStave(this.voices, this.stave);
@@ -114,24 +98,9 @@ export class VFStave extends HTMLElement {
     this.vf.draw();
   }
 
-  getFactoryScore = (e) => {
-    e.detail.factoryScore = this.score;
-    e.detail.factory = this.vf;
-  }
-
-  getFactoryScoreFromCurve = (e) => {
-    e.detail.factoryScore = this.score;
-    e.detail.factory = this.vf;
-    console.log('getFactoryScoreFromCurve received');
-  }
-
-  // testing creating a slur
-  // addSlur(notes) {
-  //   this.vf.Curve({ from:notes[0], to: notes[5] });
-  // }
-  addCurve = () => {
-    console.log('addCurve received');
-    this.vf.draw();
+  getScore = (e) => {
+    console.log('getFactoryScore')
+    e.detail.score = this.score;
   }
 
 }

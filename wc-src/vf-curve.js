@@ -10,27 +10,24 @@ export class VFCurve extends HTMLElement {
     this.dispatchEvent(getRegistryEvent);
     this.registry = getRegistryEvent.detail.registry;
 
-    const getFactoryScoreEvent = new CustomEvent('getFactoryScoreFromCurve', { bubbles: true, detail: { factoryScore: null, factory: null } });
-    this.dispatchEvent(getFactoryScoreEvent);
-    this.vf = getFactoryScoreEvent.detail.factory;
+    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factoryScore: null, factory: null } });
+    this.dispatchEvent(getFactoryEvent);
+    this.vf = getFactoryEvent.detail.factory;
 
     this.addCurve();
-    
   }
 
   addCurve() {
-    const curve = this.vf.Curve({
+    this.vf.Curve({
       from: this.getNoteFromId(this.getAttribute('from')),
       to: this.getNoteFromId(this.getAttribute('to')),
     })
 
-    const curvedCreatedEvent = new CustomEvent('curveCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
+    const curvedCreatedEvent = new CustomEvent('curveCreated', { bubbles: true });
     this.dispatchEvent(curvedCreatedEvent);
   }
 
   getNoteFromId(id) {
-    console.log('getNoteFromId, id=' + id);
-    console.log(this.registry.getElementById(id));
     return this.registry.getElementById(id);
   }
 }

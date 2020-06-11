@@ -16,10 +16,13 @@ export class VFScore extends HTMLElement {
 
     this.addEventListener('getContext', this.getContext);
     this.addEventListener('getRegistry', this.getRegistry);
+    this.addEventListener('getFactory', this.getFactory);
+    this.addEventListener('curveCreated', this.addCurve);
   }
 
   connectedCallback() {
     this.setupVexflow(this.getAttribute('width') || 500, this.getAttribute('height') || 200);
+    this.setupFactory();
   }
 
   setupVexflow(width, height) {
@@ -32,14 +35,29 @@ export class VFScore extends HTMLElement {
     Vex.Flow.Registry.enableDefaultRegistry(this.registry);
   }
 
+  setupFactory() {
+    this.vf = new Vex.Flow.Factory({renderer: {elementId: null}});
+    this.vf.setContext(this.context);
+  }
+
   /** Returns the renderer context for this vf-score component */
   getContext = (e) => {
     e.detail.context = this.context;
   }
 
+  /** Returns the VF.Factory for this vf-score component */
+  getFactory = (e) => {
+    e.detail.factory = this.vf;
+  }
+
   /** Returns the registry for this vf-score component */
   getRegistry = (e) => {
     e.detail.registry = this.registry;
+  }
+
+  addCurve = () => { // TODO: make a general 'render' function? 
+    console.log('addCurve received');
+    this.vf.draw();
   }
 }
 

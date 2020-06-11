@@ -15,9 +15,9 @@ export class VFTuplet extends HTMLElement {
     this.stemDirection = this.getAttribute('stem') || this.stemDirection; 
     this.notesText = this.textContent;
 
-    const getFactoryScoreEvent = new CustomEvent('getFactoryScore', { bubbles: true, detail: { factoryScore: null, factory: null } });
-    this.dispatchEvent(getFactoryScoreEvent);
-    this.score = getFactoryScoreEvent.detail.factoryScore;
+    const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
+    this.dispatchEvent(getScoreEvent);
+    this.score = getScoreEvent.detail.score;
 
     this.createTuplet();
   }
@@ -37,17 +37,13 @@ export class VFTuplet extends HTMLElement {
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE 
-    const getFactoryScoreEvent = new CustomEvent('getFactoryScore', { bubbles: true, detail: { factoryScore: null } });
-    this.dispatchEvent(getFactoryScoreEvent);
-    const score = getFactoryScoreEvent.detail.factoryScore;
+    this.score.set({ stem: stemDirection });
 
-    score.set({ stem: stemDirection });
-
-    const staveNotes = score.notes(line);
+    const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
   }
 
-  createBeam() { // MOVE TO A SHARED FILE
+  createBeam() {
     const beam = this.score.beam(this.notes);
     this.beam = beam;
   }

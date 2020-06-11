@@ -38,10 +38,13 @@ export class VFVoice extends HTMLElement {
     this.generateBeams = this.hasAttribute('generateBeams');
     this.notesText = this.textContent.trim();
 
-    const getFactoryScoreEvent = new CustomEvent('getFactoryScore', { bubbles: true, detail: { factoryScore: null, factory: null } });
-    this.dispatchEvent(getFactoryScoreEvent);
-    this.score = getFactoryScoreEvent.detail.factoryScore;
-    this.vf = getFactoryScoreEvent.detail.factory;
+    const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
+    this.dispatchEvent(getScoreEvent);
+    this.score = getScoreEvent.detail.score;
+
+    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
+    this.dispatchEvent(getFactoryEvent);
+    this.vf = getFactoryEvent.detail.factory;
 
     const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
 
@@ -80,7 +83,6 @@ export class VFVoice extends HTMLElement {
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
 
-    // this.addSlur(staveNotes);
     return staveNotes;
   }
 
@@ -92,10 +94,6 @@ export class VFVoice extends HTMLElement {
     return beams;
   }
 
-  // testing creating a slur
-  addSlur(notes) {
-    this.vf.Curve({ from: notes[0], to: notes[2] });
-  }
 }
 
 window.customElements.define('vf-voice', VFVoice);
