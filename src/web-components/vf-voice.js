@@ -14,6 +14,16 @@ import './vf-stave';
 import ElementAddedEvent from './events/elementAddedEvent';
 import VoiceReadyEvent from './events/voiceReadyEvent';
 
+const template = document.createElement('template');
+template.innerHTML = `
+  <style>
+    slot {
+      display: none;
+    }
+  </style>
+  <slot></slot>
+`;
+
 export class VFVoice extends HTMLElement {
 
   /**
@@ -57,7 +67,13 @@ export class VFVoice extends HTMLElement {
   constructor() {
     super();
 
+    this.numBeams = 0;
+    this.numTuplets = 0;
+    this.elementToNotesMap = new Map(); // map of textContent nodes/vf-tuplets/vf-beams to their notes
+    this.elementOrder = new Set();
+
     this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(document.importNode(template.content, true));
   }
 
   connectedCallback() {
@@ -65,6 +81,8 @@ export class VFVoice extends HTMLElement {
     this.autoBeam = this.hasAttribute('autoBeam');
 
     this.dispatchEvent(new ElementAddedEvent());
+
+    this.addEventListener('tupletCreated', this.tupletCreated);
   }
 
   static get observedAttributes() { return ['stem', 'autoBeam'] }
@@ -83,7 +101,7 @@ export class VFVoice extends HTMLElement {
    */
   set vf(value) {
     this._vf = value;
-    this.createNotes();
+    this.registerNodes();
   }
 
    /**
@@ -96,24 +114,59 @@ export class VFVoice extends HTMLElement {
    */
   set score(value) {
     this._score = value;
-    this.createNotes();
+    this.registerNodes();
+  }
+
+  registerNodes = () => {
+    if (this._vf && this._score) {
+      const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
+      assignedNodes.forEach(node => { 
+        switch (node.nodeName) {
+          case '#text':
+            const notesText = node.textContent.trim();
+            if (notesText) {
+              const notes = this.createNotes(notesText, this.stem);
+              this.elementOrder.add(node);
+              this.elementToNotesMap.set(node, notes);
+              if (this.autoBeam) {
+                this.beams.push(...this._autoGenerateBeams(notes));
+              }
+            }
+            break;
+          case 'VF-TUPLET':
+            this.numTuplets++;
+            this.elementOrder.add(node);
+            break;
+          default:
+            break;
+        }
+      });
+      this.elementAdded();
+    }
+  }
+
+  elementAdded() {
+    // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
+    if (this.numTuplets === 0) {
+      // Order notes according to their slot order
+      this.elementOrder.forEach(element => {
+        this.notes.push(...this.elementToNotesMap.get(element));
+      })
+      
+      // Dispatches event to vf-stave to create and add the voice to the stave
+      this.dispatchEvent(new VoiceReadyEvent(this.notes, this.beams));
+    }
   }
 
   /**
    * Creates notes (and optionally, beams) from the text content of this 
    * vf-voice element.
    */
-  createNotes = () => {
+  createNotes = (line, stemDirection) => {
     if (this._vf && this._score) {
-      const notes = this._createNotesFromText(this.textContent.trim());
-      // Maintaining notes in an array to set-up for future child components 
-      // that will provide their own notes
-      this.notes.push(...notes);
-      if (this.autoBeam) {
-        this.beams.push(...this._autoGenerateBeams(notes));
-      }
-
-      this.dispatchEvent(new VoiceReadyEvent(this.notes, this.beams));
+      this._score.set({ stem: stemDirection });
+      const staveNotes = this._score.notes(line);
+      return staveNotes;
     }
   }
 
@@ -149,6 +202,16 @@ export class VFVoice extends HTMLElement {
       this._vf.renderQ.push(beam);
     })
     return beams;
+  }
+
+  tupletCreated = (event) => {
+    const tuplet = event.target;
+    this.elementToNotesMap.set(tuplet, tuplet.tuplet);
+    if (tuplet.beam) {
+      this.beams.push(...tuplet.beam);
+    }
+    this.numTuplets--;
+    this.elementAdded(tuplet);
   }
 }
 
