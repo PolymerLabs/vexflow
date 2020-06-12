@@ -21,9 +21,12 @@
     "@babel/plugin-transform-object-assign": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@webcomponents/webcomponentsjs": "^2.4.3",
+    "@open-wc/testing": "^2.5.17",
+    "@open-wc/testing-karma": "^3.4.3",
     "babel-loader": "^8.0.6",
     "browserify": "^16.5.0",
     "canvas": "^2.6.1",
+    "deepmerge": "^4.2.2",
     "docco": "^0.8.0",
     "es-dev-server": "^1.54.1",
     "eslint": "^6.8.0",
@@ -46,6 +49,7 @@
     "jquery": "^3.4.1",
     "jscs": "^3.0.7",
     "jsdom": "^16.3.0",
+    "karma": "^5.1.0",
     "npm": "^6.13.7",
     "opentype.js": "^1.1.0",
     "qunit": "^2.9.3",
@@ -62,7 +66,11 @@
     "generate:blessed": "node ./tools/generate_png_images.js ../releases ./build/images/blessed",
     "generate": "npm run generate:current && npm run generate:blessed",
     "diff": "./tools/visual_regression.sh",
-    "test": "npm run lint && npm run qunit && npm run generate && npm run diff"
+    "test": "karma start --coverage",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:update-snapshots": "karma start --update-snapshots",
+    "test:prune-snapshots": "karma start --prune-snapshots",
+    "test:original": "npm run lint && npm run qunit && npm run generate && npm run diff"
   },
   "homepage": "http://vexflow.com",
   "keywords": [
