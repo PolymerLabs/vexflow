@@ -99,7 +99,6 @@ export class VFStave extends HTMLElement {
   }
 
   getScore = (e) => {
-    console.log('getFactoryScore')
     e.detail.score = this.score;
   }
 

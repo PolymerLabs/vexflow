@@ -11,6 +11,9 @@
   <body>
     <!-- <div id="boo"></div>
     <script type="module" src="./app.js"></script> -->
+
+    <!-- Multiple scores doesn't work with curves (only the last score 
+    renders curves) because default registry gets overwritten. -->
     <vf-score>
       <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
         <!-- <vf-voice clef='treble' stem='up' generateBeams>C5/q, (C4 Eb4 G4)/q, A4, G4/16, A4, B4, C5</vf-voice> -->
@@ -22,15 +25,17 @@
       <vf-curve from='here' to='there'></vf-curve>
     </vf-score>
 
-    <!-- <vf-score>
+    <vf-score>
       <vf-stave clef='treble' timeSig='3/8'>
         <vf-voice stem='up'>
           <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
-          <vf-tuplet beamed stem='down'>A4/8, F4, A4, F4, A4, F4</vf-tuplet>
+          <vf-tuplet beamed stem='down'>A4/8, F4, A4[id='end'], F4, A4, F4</vf-tuplet>
         </vf-voice>
-        <vf-voice stem='up'>d5/4, e5/8[id='end']</vf-voice>
-        <vf-curve from='start' to='end'></vf-curve>
+        <vf-voice stem='up'>d5/4, e5/8</vf-voice>
       </vf-stave>
-    </vf-score> -->
+      <vf-curve from='start' to='end'></vf-curve>
+    </vf-score>
+
+
   </body>
 </html>
