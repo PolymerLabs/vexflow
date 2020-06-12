@@ -32,7 +32,7 @@ export class VFScore extends HTMLElement {
     this.context = renderer.getContext();
 
     this.registry = new Vex.Flow.Registry();
-    Vex.Flow.Registry.enableDefaultRegistry(this.registry);
+    // Vex.Flow.Registry.enableDefaultRegistry(this.registry);
   }
 
   setupFactory() {

@@ -32,6 +32,10 @@ export class VFStave extends HTMLElement {
     this.dispatchEvent(getFactoryEvent);
     this.vf = getFactoryEvent.detail.factory;
 
+    const getRegistryEvent = new CustomEvent('getRegistry', { bubbles: true, detail: { registry: null } });
+    this.dispatchEvent(getRegistryEvent);
+    this.registry = getRegistryEvent.detail.registry;
+
     this.setupStave();
 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.voicesRegistered);
@@ -72,6 +76,7 @@ export class VFStave extends HTMLElement {
 
   addVoice = (e) => {
     const notes = e.detail.notes;
+    this.registerNotes(notes);
     const beams = e.detail.beams; 
     const voice = this.createVoiceFromNotes(notes);
 
@@ -82,6 +87,16 @@ export class VFStave extends HTMLElement {
     if (this.voices.length === this.numVoices) {
       this.formatAndDrawVoices();
     }
+  }
+
+  // Register notes that have non-auto-generated IDs to the score's registry
+  registerNotes(staveNotes) {
+    staveNotes.forEach( note => {
+      const id = note.attrs.id;
+      if (!id.includes('auto')) { 
+        this.registry.register(note, id); 
+      }
+    })
   }
 
   createVoiceFromNotes(staveNotes) {

@@ -38,7 +38,6 @@ export class VFTuplet extends HTMLElement {
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE 
     this.score.set({ stem: stemDirection });
-
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
   }

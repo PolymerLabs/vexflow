@@ -1,4 +1,5 @@
 import './vf-stave';
+import { Vex } from '../src/vex';
 
 export class VFCurve extends HTMLElement {
   constructor() {
@@ -28,6 +29,7 @@ export class VFCurve extends HTMLElement {
   }
 
   getNoteFromId(id) {
+    // return Vex.Flow.Registry.getDefaultRegistry().getElementById(id);
     return this.registry.getElementById(id);
   }
 }
