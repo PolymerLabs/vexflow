@@ -8,8 +8,8 @@ module.exports = config => {
         { pattern: config.grep ? config.grep : 'wc-test/**/*.test.js', type: 'module' },
       ],
 
-      browserNoActivityTimeout: 60000,
-      browserDisconnectTimeout: 60000,
+      browserNoActivityTimeout: 120000,
+      browserDisconnectTimeout: 120000,
 
       plugins: [
         require.resolve('@open-wc/karma-esm'),
