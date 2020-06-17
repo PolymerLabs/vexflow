@@ -72,6 +72,11 @@ export class VFStave extends HTMLElement {
   voicesRegistered = () => {
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
+
+    // to make test work
+    if (this.voices.length === this.numVoices) {
+      this.formatAndDrawVoices();
+    }
   }
 
   addVoice = (e) => {
