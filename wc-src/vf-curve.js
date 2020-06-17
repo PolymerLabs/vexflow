@@ -22,7 +22,7 @@ export class VFCurve extends HTMLElement {
     this.vf.Curve({
       from: this.getNoteFromId(this.getAttribute('from')),
       to: this.getNoteFromId(this.getAttribute('to')),
-    })
+    });
 
     const curvedCreatedEvent = new CustomEvent('curveCreated', { bubbles: true });
     this.dispatchEvent(curvedCreatedEvent);

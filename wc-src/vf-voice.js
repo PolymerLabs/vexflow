@@ -1,6 +1,7 @@
 import Vex from '../src/index';
 import './vf-stave';
 import './vf-tuplet';
+import './vf-beam';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -25,7 +26,7 @@ export class VFVoice extends HTMLElement {
 
     // Defaults
     this.stem = 'up';
-    this.generateBeams = false;
+    this.autoBeam = false;
 
     this.notes = []; // [StaveNote]
     this.beams = []; // [Beam]
@@ -35,8 +36,7 @@ export class VFVoice extends HTMLElement {
 
   connectedCallback() {
     this.stem = this.getAttribute('stem') || this.stem;
-    console.log(this.stem);
-    this.generateBeams = this.hasAttribute('generateBeams');
+    this.autoBeam = this.hasAttribute('autoBeam');
     this.notesText = this.textContent.trim();
 
     const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
@@ -49,15 +49,15 @@ export class VFVoice extends HTMLElement {
 
     const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
     assignedNodes.forEach(node => {
-      switch(node.nodeName) {
+      switch (node.nodeName) {
         case '#text':
           const notesText = node.textContent.trim();
           if (notesText) {
             console.log('found plain notes');
             const notes = this.createNotes(notesText, this.stem);
             this.notes.push(notes);
-            if (this.generateBeams) {
-              this.beams.push(this.createBeams(notes));
+            if (this.autoBeam) {
+              this.beams.push(this.autoGenerateBeams(notes));
             }
           }
           break;
@@ -68,6 +68,13 @@ export class VFVoice extends HTMLElement {
           if (node.beam) {
             this.beams.push([node.beam]);
           }
+          break;
+        case 'VF-BEAM':
+          console.log('found beamed notes');
+          this.notes.push(node.notes);
+          this.beams.push([node.beam]);
+          break;
+        default:
           break;
       }
     });
@@ -83,14 +90,12 @@ export class VFVoice extends HTMLElement {
   }
 
   createNotes(line, stemDirection) {
-    console.log(stemDirection);
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
-    console.log(staveNotes);
     return staveNotes;
   }
 
-  createBeams(notes) {
+  autoGenerateBeams(notes) {
     const beams = Vex.Flow.Beam.generateBeams(notes);
     beams.forEach(beam => {
       this.vf.renderQ.push(beam);
