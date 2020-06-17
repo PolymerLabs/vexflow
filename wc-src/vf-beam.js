@@ -1,19 +1,15 @@
-import Vex from '../src/index';
-
 import '../src/web-components/vf-stave';
 import ElementAddedEvent from '../src/web-components/events/elementAddedEvent';
 
-export class VFTuplet extends HTMLElement {
+export class VFBeam extends HTMLElement {
   constructor() {
     super();
 
-    this.beamed = false;
+    this.stemDirection = 'up';
   }
 
   connectedCallback() {
-    this.notesOccupied = this.getAttribute('notesOccupied');
-    this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem') || this.stemDirection; 
+    this.stemDirection = this.getAttribute('stem') || this.stemDirection;
     this.notesText = this.textContent;
 
     this.dispatchEvent(new ElementAddedEvent());
@@ -29,24 +25,15 @@ export class VFTuplet extends HTMLElement {
    */
   set score(value) {
     this._score = value;
-    this.createTuplet();
+    this.createNotesAndBeam();
   }
 
-  createTuplet() {
+  createNotesAndBeam() {
     this.createNotes(this.notesText, this.stemDirection);
+    this.createBeam();
 
-    this.tuplet = this._score.tuplet(this.notes, 
-      { notes_occupied: this.notesOccupied, 
-        bracketed: !this.beamed,
-        location: this.stemDirection === 'down' ? -1 : 1
-      });
-
-    if (this.beamed) {
-      this.createBeam();
-    }
-
-    const tupletCreatedEvent = new CustomEvent('tupletCreated', { bubbles: true });
-    this.dispatchEvent(tupletCreatedEvent);
+    const beamCreatedEvent = new CustomEvent('beamCreated', { bubbles: true });
+    this.dispatchEvent(beamCreatedEvent);
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
@@ -55,10 +42,10 @@ export class VFTuplet extends HTMLElement {
     this.notes = staveNotes;
   }
 
-  createBeam() { // MOVE TO A SHARED FILE
+  createBeam() {
     const beam = this._score.beam(this.notes);
     this.beam = beam;
   }
 }
 
-window.customElements.define('vf-tuplet', VFTuplet);
+window.customElements.define('vf-beam', VFBeam);

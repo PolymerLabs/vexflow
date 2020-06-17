@@ -3,3 +3,4 @@ export { VFSystem } from './vf-system';
 export { VFStave } from './vf-stave';
 export { VFVoice } from './vf-voice';
 export { VFTuplet } from '../../wc-src/vf-tuplet';
+export { VFBeam } from '../../wc-src/vf-beam';

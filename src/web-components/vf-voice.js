@@ -83,6 +83,7 @@ export class VFVoice extends HTMLElement {
     this.dispatchEvent(new ElementAddedEvent());
 
     this.addEventListener('tupletCreated', this.tupletCreated);
+    this.addEventListener('beamCreated', this.beamCreated);
   }
 
   static get observedAttributes() { return ['stem', 'autoBeam'] }
@@ -137,6 +138,10 @@ export class VFVoice extends HTMLElement {
             this.numTuplets++;
             this.elementOrder.add(node);
             break;
+          case 'VF-BEAM':
+            this.numBeams++;
+            this.elementOrder.add(node);
+            break;
           default:
             break;
         }
@@ -147,7 +152,7 @@ export class VFVoice extends HTMLElement {
 
   elementAdded() {
     // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
-    if (this.numTuplets === 0) {
+    if (this.numTuplets === 0 && this.numBeams === 0) {
       // Order notes according to their slot order
       this.elementOrder.forEach(element => {
         this.notes.push(...this.elementToNotesMap.get(element));
@@ -212,6 +217,14 @@ export class VFVoice extends HTMLElement {
     }
     this.numTuplets--;
     this.elementAdded(tuplet);
+  }
+
+  beamCreated = (event) => {
+    const beam = event.target;
+    this.elementToNotesMap.set(beam, beam.notes);
+    this.beams.push(...beam.beam);
+    this.numBeams--;
+    this.elementAdded(beam);
   }
 }
 
