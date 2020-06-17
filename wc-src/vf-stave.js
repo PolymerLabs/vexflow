@@ -75,6 +75,7 @@ export class VFStave extends HTMLElement {
 
     // to make test work
     if (this.voices.length === this.numVoices) {
+      console.log('format and draw from slotchange');
       this.formatAndDrawVoices();
     }
   }
@@ -90,6 +91,7 @@ export class VFStave extends HTMLElement {
 
     // Make sure all voices are created first, then format & draw to make sure alignment is correct
     if (this.voices.length === this.numVoices) {
+      console.log('format and draw from vf-voice dispatched');
       this.formatAndDrawVoices();
     }
   }

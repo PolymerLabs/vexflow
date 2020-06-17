@@ -1,4 +1,4 @@
-import Vex from '../src/index.js';
+import Vex from '../src/index';
 import './vf-stave';
 import './vf-tuplet';
 
@@ -20,21 +20,22 @@ export class VFVoice extends HTMLElement {
   constructor() {
     super();
 
-    this.attachShadow({ mode:'open' });
+    this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
     // Defaults
     this.stem = 'up';
     this.generateBeams = false;
 
-    this.notes = [] // [StaveNote]
-    this.beams = [] // [Beam]
+    this.notes = []; // [StaveNote]
+    this.beams = []; // [Beam]
 
-    console.log('vf-voice constructor')
+    console.log('vf-voice constructor');
   }
 
   connectedCallback() {
     this.stem = this.getAttribute('stem') || this.stem;
+    console.log(this.stem);
     this.generateBeams = this.hasAttribute('generateBeams');
     this.notesText = this.textContent.trim();
 
@@ -47,12 +48,12 @@ export class VFVoice extends HTMLElement {
     this.vf = getFactoryEvent.detail.factory;
 
     const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
-
-    assignedNodes.forEach( node => {
+    assignedNodes.forEach(node => {
       switch(node.nodeName) {
         case '#text':
           const notesText = node.textContent.trim();
           if (notesText) {
+            console.log('found plain notes');
             const notes = this.createNotes(notesText, this.stem);
             this.notes.push(notes);
             if (this.generateBeams) {
@@ -61,13 +62,15 @@ export class VFVoice extends HTMLElement {
           }
           break;
         case 'VF-TUPLET':
+          console.log('found tuplet');
+          console.log(node.tuplet);
           this.notes.push(node.tuplet);
           if (node.beam) {
             this.beams.push([node.beam]);
           }
           break;
       }
-    })
+    });
 
     this.notes = this.notes.reduce(concat);
     if (this.beams.length > 0) {
@@ -76,24 +79,24 @@ export class VFVoice extends HTMLElement {
 
     const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
     this.dispatchEvent(notesAndBeamsCreatedEvent);
-    console.log('vf-voice connectedCallback')
+    console.log('vf-voice connectedCallback');
   }
 
   createNotes(line, stemDirection) {
+    console.log(stemDirection);
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
-
+    console.log(staveNotes);
     return staveNotes;
   }
 
   createBeams(notes) {
     const beams = Vex.Flow.Beam.generateBeams(notes);
-    beams.forEach( beam => {
+    beams.forEach(beam => {
       this.vf.renderQ.push(beam);
-    })
+    });
     return beams;
   }
-
 }
 
 window.customElements.define('vf-voice', VFVoice);

@@ -7,6 +7,7 @@ export class VFTuplet extends HTMLElement {
     super();
 
     this.beamed = false;
+    console.log('vf-tuplet constructor');
   }
 
   connectedCallback() {
@@ -20,6 +21,7 @@ export class VFTuplet extends HTMLElement {
     this.score = getScoreEvent.detail.score;
 
     this.createTuplet();
+    console.log('vf-tuplet connectedCallback');
   }
   
   createTuplet() {
@@ -34,17 +36,21 @@ export class VFTuplet extends HTMLElement {
     if (this.beamed) {
       this.createBeam();
     }
+    console.log('created tuplet');
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE 
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
+    console.log('created notes');
   }
 
   createBeam() {
     const beam = this.score.beam(this.notes);
     this.beam = beam;
+
+    console.log('created beam');
   }
 }
 
