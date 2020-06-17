@@ -36,21 +36,19 @@ export class VFTuplet extends HTMLElement {
     if (this.beamed) {
       this.createBeam();
     }
-    console.log('created tuplet');
+    const tupletCreatedEvent = new CustomEvent('tupletCreated', { bubbles: true, detail: { tuplet: this }});
+    this.dispatchEvent(tupletCreatedEvent);
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE 
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
-    console.log('created notes');
   }
 
   createBeam() {
     const beam = this.score.beam(this.notes);
     this.beam = beam;
-
-    console.log('created beam');
   }
 }
 

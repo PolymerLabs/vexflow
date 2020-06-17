@@ -52,7 +52,7 @@ export class VFStave extends HTMLElement {
     this.stave = this.vf.Stave( { x: 10, y: 40, width: 400 }); // also sets this.vf.stave = this.stave
     this.stave.setContext(this.vf.context);
 
-    // change so attributes always need to be provided but not necessarily rendered? 
+    // TODO: change so attributes always need to be provided but not necessarily rendered? 
     // or add the clef component back, if clef component then render? 
     if (this.clef) {
       this.stave.addClef(this.clef);
@@ -73,9 +73,7 @@ export class VFStave extends HTMLElement {
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
 
-    // to make test work
     if (this.voices.length === this.numVoices) {
-      console.log('format and draw from slotchange');
       this.formatAndDrawVoices();
     }
   }
@@ -91,7 +89,6 @@ export class VFStave extends HTMLElement {
 
     // Make sure all voices are created first, then format & draw to make sure alignment is correct
     if (this.voices.length === this.numVoices) {
-      console.log('format and draw from vf-voice dispatched');
       this.formatAndDrawVoices();
     }
   }

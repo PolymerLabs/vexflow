@@ -23,20 +23,20 @@ export class VFBeam extends HTMLElement {
   createNotesAndBeam() {
     this.createNotes(this.notesText, this.stemDirection);
     this.createBeam();
+
+    const beamCreatedEvent = new CustomEvent('beamCreated', { bubbles: true, detail: { beam: this }});
+    this.dispatchEvent(beamCreatedEvent);
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
-    console.log('created notes');
   }
 
   createBeam() {
     const beam = this.score.beam(this.notes);
     this.beam = beam;
-
-    console.log('created beam');
   }
 }
 

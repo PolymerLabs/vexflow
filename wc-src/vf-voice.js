@@ -1,7 +1,7 @@
 import Vex from '../src/index';
 import './vf-stave';
-import './vf-tuplet';
-import './vf-beam';
+// import './vf-tuplet';
+// import './vf-beam';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -27,6 +27,9 @@ export class VFVoice extends HTMLElement {
     // Defaults
     this.stem = 'up';
     this.autoBeam = false;
+    this.numBeams = 0;
+    this.numTuplets = 0;
+    this.elementToNotesMap = new Map();
 
     this.notes = []; // [StaveNote]
     this.beams = []; // [Beam]
@@ -47,14 +50,24 @@ export class VFVoice extends HTMLElement {
     this.dispatchEvent(getFactoryEvent);
     this.vf = getFactoryEvent.detail.factory;
 
+    this.addEventListener('tupletCreated', this.tupletCreated);
+    this.addEventListener('beamCreated', this.beamCreated);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerNodes);
+  }
+
+  disconnectedCallback() {
+    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerNodes);
+  }
+
+  registerNodes = () => {
     const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
-    assignedNodes.forEach(node => {
+    assignedNodes.forEach(node => { 
       switch (node.nodeName) {
         case '#text':
           const notesText = node.textContent.trim();
           if (notesText) {
-            console.log('found plain notes');
             const notes = this.createNotes(notesText, this.stem);
+            this.elementToNotesMap.set(node, notes);
             this.notes.push(notes);
             if (this.autoBeam) {
               this.beams.push(this.autoGenerateBeams(notes));
@@ -62,31 +75,49 @@ export class VFVoice extends HTMLElement {
           }
           break;
         case 'VF-TUPLET':
-          console.log('found tuplet');
-          console.log(node.tuplet);
-          this.notes.push(node.tuplet);
-          if (node.beam) {
-            this.beams.push([node.beam]);
-          }
+          this.numTuplets++;
+          this.elementToNotesMap.set(node, []);
           break;
         case 'VF-BEAM':
-          console.log('found beamed notes');
-          this.notes.push(node.notes);
-          this.beams.push([node.beam]);
+          this.numBeams++;
+          this.elementToNotesMap.set(node, []);
           break;
         default:
           break;
       }
     });
+    this.elementAdded();
+  }
 
-    this.notes = this.notes.reduce(concat);
-    if (this.beams.length > 0) {
-      this.beams = this.beams.reduce(concat);
+  tupletCreated = (e) => {
+    const element = e.detail.tuplet;
+    this.elementToNotesMap.set(element, element.tuplet);
+    if (element.beam) {
+      this.beams.push([element.beam]);
     }
+    this.numTuplets--;
+    this.elementAdded();
+  }
 
-    const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
-    this.dispatchEvent(notesAndBeamsCreatedEvent);
-    console.log('vf-voice connectedCallback');
+  beamCreated = (e) => {
+    const element = e.detail.beam;
+    this.elementToNotesMap.set(element, element.notes);
+    this.beams.push([element.beam]);
+    this.numBeams--;
+    this.elementAdded();
+  }
+
+  elementAdded() {
+    // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
+    if (this.numTuplets === 0 && this.numBeams === 0) {
+      this.notes = Array.from(this.elementToNotesMap.values()).reduce(concat);
+      if (this.beams.length > 0) {
+        this.beams = this.beams.reduce(concat);
+      }
+      
+      const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
+      this.dispatchEvent(notesAndBeamsCreatedEvent);
+    }
   }
 
   createNotes(line, stemDirection) {

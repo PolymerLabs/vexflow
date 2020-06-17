@@ -56,7 +56,6 @@ export class VFScore extends HTMLElement {
   }
 
   addCurve = () => { // TODO: make a general 'render' function? 
-    console.log('addCurve received');
     this.vf.draw();
   }
 }
