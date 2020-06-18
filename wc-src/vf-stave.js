@@ -70,12 +70,10 @@ export class VFStave extends HTMLElement {
   }
 
   voicesRegistered = () => {
-    console.log('slotchange');
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
 
     if (this.voices.length === this.numVoices) {
-      console.log('format and draw from slotchange');
       this.formatAndDrawVoices();
     }
   }
@@ -88,11 +86,9 @@ export class VFStave extends HTMLElement {
 
     this.voices.push(voice);
     this.beams = this.beams.concat(beams);
-    console.log('voice added');
 
     // Make sure all voices are created first, then format & draw to make sure alignment is correct
     if (this.voices.length === this.numVoices) {
-      console.log('format and draw from addVoice');
       this.formatAndDrawVoices();
     }
   }
@@ -102,7 +98,6 @@ export class VFStave extends HTMLElement {
     staveNotes.forEach( note => {
       const id = note.attrs.id;
       if (!id.includes('auto')) { 
-        console.log('registering note with id = ' + id)
         this.registry.register(note, id); 
       }
     })

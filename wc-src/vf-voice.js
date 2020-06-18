@@ -28,9 +28,10 @@ export class VFVoice extends HTMLElement {
     this.numBeams = 0;
     this.numTuplets = 0;
     this.elementToNotesMap = new Map();
+    this.elementOrder = new Set();
 
-    this.notes = []; // [StaveNote]
-    this.beams = []; // [Beam]
+    this.notes = [];
+    this.beams = [];
 
     console.log('vf-voice constructor');
   }
@@ -65,8 +66,8 @@ export class VFVoice extends HTMLElement {
           const notesText = node.textContent.trim();
           if (notesText) {
             const notes = this.createNotes(notesText, this.stem);
+            this.elementOrder.add(node);
             this.elementToNotesMap.set(node, notes);
-            this.notes.push(notes);
             if (this.autoBeam) {
               this.beams.push(this.autoGenerateBeams(notes));
             }
@@ -74,11 +75,11 @@ export class VFVoice extends HTMLElement {
           break;
         case 'VF-TUPLET':
           this.numTuplets++;
-          this.elementToNotesMap.set(node, []);
+          this.elementOrder.add(node);
           break;
         case 'VF-BEAM':
           this.numBeams++;
-          this.elementToNotesMap.set(node, []);
+          this.elementOrder.add(node);
           break;
         default:
           break;
@@ -89,14 +90,24 @@ export class VFVoice extends HTMLElement {
 
   tupletCreated = () => {
     const tuplet = event.target;
-    // console.log(e.target);
-    // console.log(element);
-    console.log('tuplet received from event: ' + tuplet.tuplet);
-    console.log(tuplet.tuplet);
     this.elementToNotesMap.set(tuplet, tuplet.tuplet);
-    console.log('tuplet created: ' + this.elementToNotesMap.get(tuplet));
-    console.log(this.elementToNotesMap.get(tuplet));
-    console.log('values: ' + this.elementToNotesMap.values());
+    if (tuplet.beam) {
+      this.beams.push([tuplet.beam]);
+    }
+    this.numTuplets--;
+    this.elementAdded(tuplet);
+  }
+
+  beamCreated = () => {
+    const beam = event.target;
+    this.elementToNotesMap.set(beam, beam.notes);
+    this.beams.push([beam.beam]);
+    this.numBeams--;
+    this.elementAdded(beam);
+  }
+
+  /** For debugging what's in the map */
+  iterateOverMap() {
     const it = this.elementToNotesMap.values();
     const keysIt = this.elementToNotesMap.keys();
     let notes = it.next();
@@ -108,20 +119,6 @@ export class VFVoice extends HTMLElement {
       notes = it.next();
       key = keysIt.next();
     }
-    console.log(this.elementToNotesMap.values());
-    if (tuplet.beam) {
-      this.beams.push([tuplet.beam]);
-    }
-    this.numTuplets--;
-    this.elementAdded();
-  }
-
-  beamCreated = () => {
-    const beam = event.target;
-    this.elementToNotesMap.set(beam, beam.notes);
-    this.beams.push([beam.beam]);
-    this.numBeams--;
-    this.elementAdded();
   }
 
   elementAdded() {
@@ -129,25 +126,17 @@ export class VFVoice extends HTMLElement {
     console.log('checking if all elements are back');
     if (this.numTuplets === 0 && this.numBeams === 0) {
       console.log('all elements received');
-      // console.log(this.elementToNotesMap.values());
-      // const it = this.elementToNotesMap.values();
-      // const keysIt = this.elementToNotesMap.keys();
-      // let notes = it.next();
-      // let key = keysIt.next();
-      // while (!notes.done) {
-      //   console.log(key);
-      //   console.log(notes);
-      //   notes = it.next();
-      //   key = keysIt.next();
-      //  }
-      this.notes = Array.from(this.elementToNotesMap.values()).reduce(concat);
-      // console.log('notes: ');
-      // console.log(this.notes);
+      // Order notes according to their slot order
+      this.elementOrder.forEach(element => {
+        this.notes.push(this.elementToNotesMap.get(element));
+      })
 
+      this.notes = this.notes.reduce(concat);
       if (this.beams.length > 0) {
         this.beams = this.beams.reduce(concat);
       }
       
+      // Dispatches event to vf-stave to create and add the voice to the stave
       const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
       this.dispatchEvent(notesAndBeamsCreatedEvent);
     }

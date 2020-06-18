@@ -17,12 +17,13 @@ export class VFBeam extends HTMLElement {
     this.score = getScoreEvent.detail.score;
 
     this.createNotesAndBeam();
-    console.log('vf-beam connectedCallback');
   }
 
   createNotesAndBeam() {
     this.createNotes(this.notesText, this.stemDirection);
     this.createBeam();
+    
+    console.log('dispatching beamCreated event');
 
     const beamCreatedEvent = new CustomEvent('beamCreated', { bubbles: true, detail: { beam: this } });
     this.dispatchEvent(beamCreatedEvent);

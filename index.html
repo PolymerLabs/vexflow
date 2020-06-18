@@ -13,40 +13,40 @@
     <!-- <div id="boo"></div>
     <script type="module" src="./app.js"></script> -->
 
-    <vf-score>
-      <vf-stave clef='treble' timeSig='3/4'>
-        <vf-voice>
-          <vf-tuplet stem='up'>G4/q, A4, B4</vf-tuplet>
-          <vf-tuplet stem='up'>B4/8, A4, G4</vf-tuplet>
+    <!-- <vf-score>
+      <vf-stave clef='treble' timeSig='4/4'>
+        <vf-voice stem='up'>
+          <vf-tuplet stem='up'>F4/q, A4, B4</vf-tuplet>
+          <vf-tuplet beamed stem='up' notesOccupied='4'>G4/8, E4, G4</vf-tuplet>
         </vf-voice>
       </vf-stave>
-    </vf-score>
+    </vf-score> -->
 
-    <vf-score>
+    <!-- <vf-score>
       <vf-stave clef='treble' timeSig='4/4'>
         <vf-voice stem='down'>
           <vf-beam stem='down'>c4/8, f5, d5, g5</vf-beam>
           <vf-beam stem='down'>d6/8, f5, d5, g5</vf-beam>
         </vf-voice>
       </vf-stave>
-    </vf-score>
-
-    <!-- <vf-score>
-      <vf-stave clef='treble' timeSig='4/4'>
-        <vf-voice stem='down' autoBeam>c4/8, f5, d5, g5, d6/8, f5, d5, g5</vf-voice>
-      </vf-stave>
     </vf-score> -->
 
     <vf-score>
+      <vf-stave clef='treble' timeSig='4/4'>
+        <vf-voice stem='down' autoBeam>c4/8, f5, d5, g5, d6/8, f5, d5, g5</vf-voice>
+      </vf-stave>
+    </vf-score>
+
+    <!-- <vf-score>
       <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
         <vf-voice stem='up'>
           C#5/q[id='here'], B4, A4, E4[id='there']</vf-tuplet>
         </vf-voice>
       </vf-stave>
       <vf-curve from='here' to='there'></vf-curve>
-    </vf-score>
+    </vf-score> -->
 
-    <!-- <vf-score>
+    <vf-score>
       <vf-stave clef='treble' timeSig='3/8'>
         <vf-voice stem='up'>
           <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
@@ -55,7 +55,7 @@
         <vf-voice stem='up'>d5/4, e5/8</vf-voice>
       </vf-stave>
       <vf-curve from='start' to='end'></vf-curve>
-    </vf-score> -->
+    </vf-score>
 
   </body>
 </html>
