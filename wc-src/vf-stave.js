@@ -100,17 +100,15 @@ export class VFStave extends HTMLElement {
   // Register notes that have non-auto-generated IDs to the score's registry
   registerNotes(staveNotes) {
     staveNotes.forEach( note => {
-      console.log('iterating over notes to register');
       const id = note.attrs.id;
-      console.log('id = ' + id);
       if (!id.includes('auto')) { 
         console.log('registering note with id = ' + id)
         this.registry.register(note, id); 
       }
     })
 
-    const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
-    this.dispatchEvent(notesRegisteredEvent);
+    // const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
+    // this.dispatchEvent(notesRegisteredEvent);
   }
 
   createVoiceFromNotes(staveNotes) {

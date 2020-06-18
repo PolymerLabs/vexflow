@@ -87,15 +87,15 @@ export class VFVoice extends HTMLElement {
     this.elementAdded();
   }
 
-  tupletCreated = (e) => {
-    const element = e.detail.tuplet;
+  tupletCreated = () => {
+    const tuplet = event.target;
     // console.log(e.target);
     // console.log(element);
-    console.log('tuplet received from event: ' + element.tuplet);
-    console.log(element.tuplet);
-    this.elementToNotesMap.set(element, element.tuplet);
-    console.log('tuplet created: ' + this.elementToNotesMap.get(element));
-    console.log(this.elementToNotesMap.get(element));
+    console.log('tuplet received from event: ' + tuplet.tuplet);
+    console.log(tuplet.tuplet);
+    this.elementToNotesMap.set(tuplet, tuplet.tuplet);
+    console.log('tuplet created: ' + this.elementToNotesMap.get(tuplet));
+    console.log(this.elementToNotesMap.get(tuplet));
     console.log('values: ' + this.elementToNotesMap.values());
     const it = this.elementToNotesMap.values();
     const keysIt = this.elementToNotesMap.keys();
@@ -109,17 +109,17 @@ export class VFVoice extends HTMLElement {
       key = keysIt.next();
     }
     console.log(this.elementToNotesMap.values());
-    if (element.beam) {
-      this.beams.push([element.beam]);
+    if (tuplet.beam) {
+      this.beams.push([tuplet.beam]);
     }
     this.numTuplets--;
     this.elementAdded();
   }
 
-  beamCreated = (e) => {
-    const element = e.detail.beam;
-    this.elementToNotesMap.set(element, element.notes);
-    this.beams.push([element.beam]);
+  beamCreated = () => {
+    const beam = event.target;
+    this.elementToNotesMap.set(beam, beam.notes);
+    this.beams.push([beam.beam]);
     this.numBeams--;
     this.elementAdded();
   }

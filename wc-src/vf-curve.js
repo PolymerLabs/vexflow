@@ -21,7 +21,7 @@ export class VFCurve extends HTMLElement {
 
     console.log('vf-curve connectedCallback');
 
-    // this.addCurve();
+    this.addCurve();
   }
 
   addCurve() {

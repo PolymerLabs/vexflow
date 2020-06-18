@@ -11,12 +11,6 @@ module.exports = config => {
       browserNoActivityTimeout: 120000,
       browserDisconnectTimeout: 120000,
 
-      plugins: [
-        require.resolve('@open-wc/karma-esm'),
-    
-        'karma-*',
-      ],
-
       frameworks: ['esm'],
 
       esm: {
