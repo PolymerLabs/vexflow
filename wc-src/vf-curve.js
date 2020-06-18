@@ -1,9 +1,10 @@
 import './vf-stave';
-import { Vex } from '../src/vex';
 
 export class VFCurve extends HTMLElement {
   constructor() {
     super();
+
+    console.log('vf-curve constructor');
   }
 
   connectedCallback() {
@@ -15,7 +16,12 @@ export class VFCurve extends HTMLElement {
     this.dispatchEvent(getFactoryEvent);
     this.vf = getFactoryEvent.detail.factory;
 
-    this.addCurve();
+    this.from = this.getAttribute('from');
+    this.to = this.getAttribute('to');
+
+    console.log('vf-curve connectedCallback');
+
+    // this.addCurve();
   }
 
   addCurve() {
@@ -30,6 +36,8 @@ export class VFCurve extends HTMLElement {
 
   getNoteFromId(id) {
     // return Vex.Flow.Registry.getDefaultRegistry().getElementById(id);
+    console.log('getNoteFromId, id = ' + id);
+    console.log(this.registry.getElementById(id));
     return this.registry.getElementById(id);
   }
 }

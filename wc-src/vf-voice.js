@@ -1,7 +1,5 @@
 import Vex from '../src/index';
 import './vf-stave';
-// import './vf-tuplet';
-// import './vf-beam';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -91,7 +89,26 @@ export class VFVoice extends HTMLElement {
 
   tupletCreated = (e) => {
     const element = e.detail.tuplet;
+    // console.log(e.target);
+    // console.log(element);
+    console.log('tuplet received from event: ' + element.tuplet);
+    console.log(element.tuplet);
     this.elementToNotesMap.set(element, element.tuplet);
+    console.log('tuplet created: ' + this.elementToNotesMap.get(element));
+    console.log(this.elementToNotesMap.get(element));
+    console.log('values: ' + this.elementToNotesMap.values());
+    const it = this.elementToNotesMap.values();
+    const keysIt = this.elementToNotesMap.keys();
+    let notes = it.next();
+    let key = keysIt.next();
+    while (!notes.done) {
+      console.log(key);
+      console.log('value: ' + notes);
+      console.log(notes);
+      notes = it.next();
+      key = keysIt.next();
+    }
+    console.log(this.elementToNotesMap.values());
     if (element.beam) {
       this.beams.push([element.beam]);
     }
@@ -109,8 +126,24 @@ export class VFVoice extends HTMLElement {
 
   elementAdded() {
     // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
+    console.log('checking if all elements are back');
     if (this.numTuplets === 0 && this.numBeams === 0) {
+      console.log('all elements received');
+      // console.log(this.elementToNotesMap.values());
+      // const it = this.elementToNotesMap.values();
+      // const keysIt = this.elementToNotesMap.keys();
+      // let notes = it.next();
+      // let key = keysIt.next();
+      // while (!notes.done) {
+      //   console.log(key);
+      //   console.log(notes);
+      //   notes = it.next();
+      //   key = keysIt.next();
+      //  }
       this.notes = Array.from(this.elementToNotesMap.values()).reduce(concat);
+      // console.log('notes: ');
+      // console.log(this.notes);
+
       if (this.beams.length > 0) {
         this.beams = this.beams.reduce(concat);
       }

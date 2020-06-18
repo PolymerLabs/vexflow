@@ -13,7 +13,7 @@ export class VFTuplet extends HTMLElement {
   connectedCallback() {
     this.notesOccupied = this.getAttribute('notesOccupied');
     this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem') || this.stemDirection; 
+    this.stemDirection = this.getAttribute('stem') || this.stemDirection;
     this.notesText = this.textContent;
 
     const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
@@ -23,24 +23,28 @@ export class VFTuplet extends HTMLElement {
     this.createTuplet();
     console.log('vf-tuplet connectedCallback');
   }
-  
+
   createTuplet() {
     this.createNotes(this.notesText, this.stemDirection);
 
-    this.tuplet = this.score.tuplet(this.notes, 
-      { notes_occupied: this.notesOccupied, 
+    this.tuplet = this.score.tuplet(this.notes,
+      { notes_occupied: this.notesOccupied,
         bracketed: !this.beamed,
         location: this.stemDirection === 'down' ? -1 : 1
       });
-    
+
     if (this.beamed) {
       this.createBeam();
     }
+
+    // console.log('created tuplet');
+    // console.log(this);
+    // console.log(this.tuplet);
     const tupletCreatedEvent = new CustomEvent('tupletCreated', { bubbles: true, detail: { tuplet: this }});
     this.dispatchEvent(tupletCreatedEvent);
   }
 
-  createNotes(line, stemDirection) { // MOVE TO A SHARED FILE 
+  createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
     this.score.set({ stem: stemDirection });
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;

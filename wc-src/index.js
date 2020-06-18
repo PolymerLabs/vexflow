@@ -3,3 +3,4 @@ import { VFStave } from './vf-stave';
 import { VFTuplet } from './vf-tuplet';
 import { VFVoice } from './vf-voice';
 import { VFCurve } from './vf-curve';
+import { VFBeam } from './vf-beam';

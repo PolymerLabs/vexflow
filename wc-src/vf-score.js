@@ -18,6 +18,7 @@ export class VFScore extends HTMLElement {
     this.addEventListener('getRegistry', this.getRegistry);
     this.addEventListener('getFactory', this.getFactory);
     this.addEventListener('curveCreated', this.addCurve);
+    this.addEventListener('notesRegistered', this.notesRegistered);
   }
 
   connectedCallback() {
@@ -53,6 +54,16 @@ export class VFScore extends HTMLElement {
   /** Returns the registry for this vf-score component */
   getRegistry = (e) => {
     e.detail.registry = this.registry;
+  }
+
+  notesRegistered = () => {
+    console.log('learned that notes are registered');
+    const curves = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-CURVE');
+    curves.forEach(curve => {
+      console.log(curve);
+      console.log(curve.getAttribute('from'));
+      curve.addCurve();
+    })
   }
 
   addCurve = () => { // TODO: make a general 'render' function? 

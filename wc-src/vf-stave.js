@@ -70,10 +70,12 @@ export class VFStave extends HTMLElement {
   }
 
   voicesRegistered = () => {
+    console.log('slotchange');
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
 
     if (this.voices.length === this.numVoices) {
+      console.log('format and draw from slotchange');
       this.formatAndDrawVoices();
     }
   }
@@ -86,9 +88,11 @@ export class VFStave extends HTMLElement {
 
     this.voices.push(voice);
     this.beams = this.beams.concat(beams);
+    console.log('voice added');
 
     // Make sure all voices are created first, then format & draw to make sure alignment is correct
     if (this.voices.length === this.numVoices) {
+      console.log('format and draw from addVoice');
       this.formatAndDrawVoices();
     }
   }
@@ -96,20 +100,29 @@ export class VFStave extends HTMLElement {
   // Register notes that have non-auto-generated IDs to the score's registry
   registerNotes(staveNotes) {
     staveNotes.forEach( note => {
+      console.log('iterating over notes to register');
       const id = note.attrs.id;
+      console.log('id = ' + id);
       if (!id.includes('auto')) { 
+        console.log('registering note with id = ' + id)
         this.registry.register(note, id); 
       }
     })
+
+    const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
+    this.dispatchEvent(notesRegisteredEvent);
   }
 
   createVoiceFromNotes(staveNotes) {
+    console.log('creating voice from notes');
     return this.score.voice(staveNotes);
   }
 
   formatAndDrawVoices() {
     var formatter = new Vex.Flow.Formatter()
+    // console.log(this.voices);
     formatter.joinVoices(this.voices);
+    // console.log('joined voices');
     formatter.formatToStave(this.voices, this.stave);
 
     // this.voices.forEach(voice => voice.draw(this.context, this.stave));
