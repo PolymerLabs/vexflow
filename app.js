@@ -1,29 +1,43 @@
 import Vex from './src/index.js';
 
-// EasyScore API Example
-
 const VF = Vex.Flow;
 
-// Create an SVG renderer and attach it to the DIV element named "boo".
 var vf = new VF.Factory({renderer: {elementId: 'boo'}});
 var score = vf.EasyScore();
 var system = vf.System();
+
+var registry = new VF.Registry();
+VF.Registry.enableDefaultRegistry(registry);
+
+function id(id) { return registry.getElementById(id); }
 
 score.set({
   time: '3/8'
 });
 
-
 system.addStave({
   voices: [
     score.voice(
-      score.tuplet(score.beam((score.notes('B4/16, A4, G4', {stem: 'down'}))))
-        .concat(
-          score.tuplet(score.beam((score.notes('A4/8, F4, A4, F4, A4, F4, G4', {stem: 'down'})))))
+      score.tuplet(
+        score.beam(
+          score.notes('B4/16, A4[id="start"], G4', {stem: 'down'})
+        ), 
+        {location: -1}
+      ).concat(
+      score.tuplet(
+        score.beam(
+          score.notes('A4/8, F4, A4[id="end"], F4, A4, F4', {stem: 'down'})
+        ), 
+        {location: -1}
+      ))
     ),
-    score.voice(score.notes('c5/8, e5, e5'))
+    score.voice(score.notes('d5/4, e5/8', {stem: 'up'}))
   ]
 }).addClef('treble').addTimeSignature('3/8');
 
+vf.Curve({
+  from: id('start'),
+  to: id('end'),
+});
+
 vf.draw();
- 

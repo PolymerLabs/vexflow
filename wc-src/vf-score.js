@@ -17,7 +17,6 @@ export class VFScore extends HTMLElement {
     this.addEventListener('getContext', this.getContext);
     this.addEventListener('getRegistry', this.getRegistry);
     this.addEventListener('getFactory', this.getFactory);
-    this.addEventListener('curveCreated', this.addCurve);
     this.addEventListener('notesRegistered', this.notesRegistered);
   }
 
@@ -59,14 +58,23 @@ export class VFScore extends HTMLElement {
   notesRegistered = () => {
     console.log('learned that notes are registered');
     const curves = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-CURVE');
-    curves.forEach(curve => {
-      console.log(curve);
-      console.log(curve.getAttribute('from'));
-      curve.addCurve();
-    })
+    curves.forEach(this.addCurve);
+    this.draw();
   }
 
-  addCurve = () => { // TODO: make a general 'render' function? 
+  addCurve = (curve) => {
+    this.vf.Curve({
+      from: this.getNoteFromId(curve.getAttribute('from')),
+      to: this.getNoteFromId(curve.getAttribute('to')),
+    });
+  }
+
+  getNoteFromId(id) {
+    // return Vex.Flow.Registry.getDefaultRegistry().getElementById(id);
+    return this.registry.getElementById(id);
+  }
+
+  draw = () => {
     this.vf.draw();
   }
 }

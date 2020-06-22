@@ -101,9 +101,6 @@ export class VFStave extends HTMLElement {
         this.registry.register(note, id); 
       }
     })
-
-    // const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
-    // this.dispatchEvent(notesRegisteredEvent);
   }
 
   createVoiceFromNotes(staveNotes) {
@@ -113,14 +110,13 @@ export class VFStave extends HTMLElement {
 
   formatAndDrawVoices() {
     var formatter = new Vex.Flow.Formatter()
-    // console.log(this.voices);
     formatter.joinVoices(this.voices);
-    // console.log('joined voices');
     formatter.formatToStave(this.voices, this.stave);
-
-    // this.voices.forEach(voice => voice.draw(this.context, this.stave));
-    // this.beams.forEach(beam => beam.setContext(this.context).draw());
     this.vf.draw();
+
+    // Tell vf-score that notes from all voices are registered and formatted
+    const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
+    this.dispatchEvent(notesRegisteredEvent);
   }
 
   getScore = (e) => {
