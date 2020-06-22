@@ -3,7 +3,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import '../wc-src/index';
 
 describe('vf-curve', () => {
-  it('simple curve', async() => {
+  it('simple beam', async() => {
     const el = await fixture(html`
       <vf-score>
         <vf-stave clef='treble' timeSig='4/4'>
