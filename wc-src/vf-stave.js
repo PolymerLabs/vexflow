@@ -18,6 +18,7 @@ export class VFStave extends HTMLElement {
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
     this.addEventListener('getScore', this.getScore);
+    this.addEventListener('getStave', this.getStave);
     this.addEventListener('notesCreated', this.addVoice);
 
     console.log('vf-stave constructor')
@@ -45,13 +46,13 @@ export class VFStave extends HTMLElement {
   setupStave() { // add attributes for stave size?  
     this.score = this.vf.EasyScore();
     this.score.set({
-      clef: this.clef,
-      time: this.timeSig
+      clef: this.clef || 'treble',
+      time: this.timeSig || '4/4'
     });
 
-    this.stave = this.vf.Stave( { x: 10, y: 40, width: 400 }); // also sets this.vf.stave = this.stave
-    this.stave.setContext(this.vf.context);
-
+    this.stave = this.vf.Stave( { x: parseInt(this.getAttribute('x')) || 10, y: 40, width: parseInt(this.getAttribute('width')) || 400 }); // also sets this.vf.stave = this.stave and this.staves.push(stave);
+    // this.stave.setContext(this.vf.context);
+    console.log(this.vf.stave);
     // TODO: change so attributes always need to be provided but not necessarily rendered? 
     // or add the clef component back, if clef component then render? 
     if (this.clef) {
@@ -66,7 +67,7 @@ export class VFStave extends HTMLElement {
       this.stave.addKeySignature(this.keySig);
     }
     
-    this.stave.draw();
+    // this.stave.draw();
   }
 
   voicesRegistered = () => {
@@ -109,11 +110,13 @@ export class VFStave extends HTMLElement {
   }
 
   formatAndDrawVoices() {
-    var formatter = new Vex.Flow.Formatter()
-    formatter.joinVoices(this.voices);
-    formatter.formatToStave(this.voices, this.stave);
-    this.vf.draw();
+    // var formatter = new Vex.Flow.Formatter()
+    // formatter.joinVoices(this.voices);
+    // formatter.formatToStave(this.voices, this.stave);
+    // this.vf.draw();
 
+    const staveCreatedEvent = new CustomEvent('staveCreated', { bubbles: true });
+    this.dispatchEvent(staveCreatedEvent);
     // Tell vf-score that notes from all voices are registered and formatted
     const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
     this.dispatchEvent(notesRegisteredEvent);
@@ -121,6 +124,10 @@ export class VFStave extends HTMLElement {
 
   getScore = (e) => {
     e.detail.score = this.score;
+  }
+
+  getStave = (e) => {
+    e.detail.stave = this.stave;
   }
 
 }

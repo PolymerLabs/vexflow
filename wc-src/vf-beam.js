@@ -16,6 +16,14 @@ export class VFBeam extends HTMLElement {
     this.dispatchEvent(getScoreEvent);
     this.score = getScoreEvent.detail.score;
 
+    const getStaveEvent = new CustomEvent('getStave', { bubbles: true, detail: { score: null} });
+    this.dispatchEvent(getStaveEvent);
+    this.stave = getStaveEvent.detail.stave;
+
+    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
+    this.dispatchEvent(getFactoryEvent);
+    this.vf = getFactoryEvent.detail.factory;
+
     this.createNotesAndBeam();
   }
 
@@ -31,6 +39,8 @@ export class VFBeam extends HTMLElement {
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
     this.score.set({ stem: stemDirection });
+    console.log('create notes in vf-beam');
+    this.vf.stave = this.stave;
     const staveNotes = this.score.notes(line);
     this.notes = staveNotes;
   }

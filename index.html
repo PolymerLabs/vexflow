@@ -1,8 +1,9 @@
 <html>
   <head>
     <title>Vexflow Component</title>
-    <script type="module" src='./wc-src/vf-clef.js'></script>
+    <!-- <script type="module" src='./wc-src/vf-clef.js'></script> -->
     <script type="module" src='./wc-src/vf-score.js'></script>
+    <script type="module" src='./wc-src/vf-system.js'></script>
     <script type="module" src='./wc-src/vf-stave.js'></script>
     <script type="module" src='./wc-src/vf-voice.js'></script>
     <script type="module" src='./wc-src/vf-tuplet.js'></script>
@@ -23,28 +24,36 @@
     </vf-score> -->
 
     <vf-score>
-      <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
-        <vf-voice stem='up'>
-          C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
-        </vf-voice>
-      </vf-stave>
-      <vf-curve from='here' to='there'></vf-curve>
+      <vf-system>
+        <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
+          <vf-voice stem='up'>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+        <!-- <vf-curve from='here' to='there'></vf-curve> -->
+        <vf-stave clef='bass'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
     </vf-score>
 
-    <vf-score>
+    <!-- <vf-score>
       <vf-stave clef='treble' timeSig='4/4'>
         <vf-voice stem='down'>
           <vf-beam stem='down'>c4/8, f5, d5, g5</vf-beam>
           <vf-beam stem='down'>d6/8, f5, d5, g5</vf-beam>
         </vf-voice>
       </vf-stave>
-    </vf-score>
+    </vf-score> -->
 
-    <vf-score>
+    <!-- <vf-score>
       <vf-stave clef='bass' timeSig='3/4'>
         <vf-voice autoBeam>(ab2 c3 f3)/4, g3/16, f3, e3, d3, d3/q/r</vf-voice>
       </vf-stave>
-    </vf-score>
+    </vf-score> -->
 
     <!-- <vf-score>
       <vf-stave clef='treble' timeSig='4/4'>
@@ -52,7 +61,7 @@
       </vf-stave>
     </vf-score> -->
 
-    <vf-score>
+    <!-- <vf-score>
       <vf-stave clef='treble' timeSig='3/8'>
         <vf-voice stem='up'>
           <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
@@ -67,7 +76,7 @@
       <vf-stave clef='treble' timeSig='4/4'>
           <vf-voice autoBeam>e##5/8., bb4/16, c4/8, d4/16, eb4, d4, e#4, g4/32, a4, g4/16, d4/q</vf-voice>
       </vf-stave>
-    </vf-score>
+    </vf-score> -->
 
   </body>
 </html>

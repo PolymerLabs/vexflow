@@ -21,7 +21,7 @@ export class VFScore extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setupVexflow(this.getAttribute('width') || 500, this.getAttribute('height') || 200);
+    this.setupVexflow(this.getAttribute('width') || 1000, this.getAttribute('height') || 1000);
     this.setupFactory();
   }
 
@@ -59,7 +59,7 @@ export class VFScore extends HTMLElement {
     console.log('learned that notes are registered');
     const curves = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-CURVE');
     curves.forEach(this.addCurve);
-    this.draw();
+    // this.draw();
   }
 
   addCurve = (curve) => {
