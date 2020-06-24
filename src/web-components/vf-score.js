@@ -41,13 +41,13 @@ export class VFScore extends HTMLElement {
    * The starting x position of a system within the score.
    * @private
    */
-  _x = 10;
+  _startX = 10;
 
   /**
    * The starting y position of system within the score. 
    * @private
    */
-  _y = 0;
+  _startY = 0;
 
   /**
    * The entire width of the element holding the music notation.
@@ -59,7 +59,7 @@ export class VFScore extends HTMLElement {
    * The entire height of the element holding the music notation.
    * @private
    */
-  _height = 150; 
+  _height; 
 
   /**
    * The number of systems per line.  
@@ -111,10 +111,11 @@ export class VFScore extends HTMLElement {
   }
 
   connectedCallback() {
-    this._x = parseInt(this.getAttribute('x')) || this._x;
-    this._y = parseInt(this.getAttribute('y')) || this._y;
+    this._startX = parseInt(this.getAttribute('x')) || this._startX;
+    this._startY = parseInt(this.getAttribute('y')) || this._startY;
     this._rendererType = this.getAttribute('renderer') || this._rendererType;
-
+    this._systemsPerLine = parseInt(this.getAttribute('systemsPerLine')) || this._systemsPerLine;
+    this.staveWidth = Math.floor((this._width - this._startX-1) / this._systemsPerLine);
 
     // Because connectedCallback could be called multiple times, safeguard 
     // against setting up the renderer, factory, etc. more than once. 
@@ -125,12 +126,12 @@ export class VFScore extends HTMLElement {
 
     // vf-score listens to the slotchange event so that it can detect its system 
     // and set it up accordingly
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystem);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystems);
   }
 
   disconnectedCallback() {
     // TODO (ywsang): Clean up any resources that may need to be cleaned up. 
-    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerSystem);
+    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerSystems);
   }
 
   static get observedAttributes() { return ['x', 'y', 'width', 'height', 'renderer'] }
@@ -175,7 +176,6 @@ export class VFScore extends HTMLElement {
       this._renderer = new Vex.Flow.Renderer(element, Vex.Flow.Renderer.Backends.SVG);
     }
 
-    this._renderer.resize(this._width, this._height);
     this._context = this._renderer.getContext();
     this.registry = new Vex.Flow.Registry();
   }
@@ -205,29 +205,92 @@ export class VFScore extends HTMLElement {
    * "Registers" the vf-system child. 
    * This PR only supports/assumes one vf-system per vf-score. 
    */
-  registerSystem = () => {
-    const system = this.shadowRoot.querySelector('slot').assignedElements()[0];
-    // TODO (ywsang): Figure out how to account for any added connectors that 
-    // get drawn in front of the x position (e.g. brace, bracket)
-    system.setupSystem(this._x, this._y, this._width - this._x - 1); // Minus 1 to account for the overflow of the right bar line 
+  registerSystems = () => {
+    const systems = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-SYSTEM');
+    this.totalNumSystems = systems.length;
+
+    const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
+
+    this.x = this._startX;
+    this.y = this._startY;
+
+    var i;
+    var lineNumber = 1;
+    var adjustedLastLine = false;
+    for (i = 1; i <= this.totalNumSystems; i++) {
+      console.log(`system number ${i}`);
+      const system = systems[i-1];
+
+      if (lineNumber === numLines && !adjustedLastLine) {
+        const systemsLeft = this.totalNumSystems - (i - 1);
+        this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
+        console.log(this.staveWidth);
+        adjustedLastLine = true;
+      }
+
+      // TODO (ywsang): Figure out how to account for any added connectors that 
+      // get drawn in front of the x position (e.g. brace, bracket)
+      console.log(`x = ${this.x}`);
+      console.log(`y = ${this.y}`);
+      system.setupSystem(this.x, this.y, this.staveWidth);  
+
+      this.x += this.staveWidth;
+      if (i % this._systemsPerLine === 0) { // break to new line 
+        this.x = this._startX; // reset x position
+        this.y += this.getSystemLineHeight(system.childElementCount); // update y position
+        lineNumber++;
+      }
+    }
+
+    // If the last line was not filled, account for their height 
+    if (this.totalNumSystems % this._systemsPerLine !== 0) {
+      const lastSystem = systems[this.totalNumSystems - 1];
+      this.y += this.getSystemLineHeight(lastSystem.childElementCount);
+    }
+
+    console.log(this._height);
+    this._renderer.resize(this._width, (this._height) ? this._height : this.y);
+  }
+
+  getSystemLineHeight(stavesInSystem) {
+    return 130 * stavesInSystem;
   }
 
   /**
-   * Once all systems have dispatched events signalling that they've added their 
-   * staves, the entire score is drawn.
+   * TODO
    */
   systemCreated = () => {
-    this.addSystemConnectors();
-    this.vf.draw();
+    this._systemsAdded++;
+    this.systemAdded();
+  }
+
+  systemAdded() {
+    if (this.totalNumSystems === this._systemsAdded) {
+      this.addSystemConnectors();
+      // this.addCurves();
+      this.vf.draw();
+    }
   }
 
   addSystemConnectors() {
-    const system = this.vf.systems[0]; // TODO (ywsang): Replace with better 
-                                       // logic once more than one system per
-                                       // score is allowed. 
-    system.addConnector('singleRight');
-    system.addConnector('singleLeft');
+    const systems = this.vf.systems;
+    const numSystems = systems.length;
+
+    var i;
+    for (i = 0; i < numSystems; i++) {
+      systems[i].addConnector('singleRight');
+      // if (i % this._systemsPerLine === 0) {
+        systems[i].addConnector('singleLeft');
+      // }
+    }
   }
+
+  // addCurves() {
+  //   const curves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-CURVE');
+  //   curves.forEach(curve => {
+  //     curve.addCurve();
+  //   })
+  // }
 
   /** 
    * Sets the factory instance of the component that dispatched the event. 

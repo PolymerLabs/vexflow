@@ -97,7 +97,7 @@ export class VFSystem extends HTMLElement {
    */
   _registerStaves = () => {
     const staves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-STAVE');
-    this._numStaves += staves.length;
+    this._numStaves = staves.length;
     this.staveOrder = staves;
     this._createSystem();
   }
@@ -163,9 +163,6 @@ export class VFSystem extends HTMLElement {
       }
 
       // Tells parent (vf-score) that this system has finished adding its staves
-      // const systemCreatedEvent = new CustomEvent('systemCreated', { bubbles: true });
-      // this.dispatchEvent(systemCreatedEvent);
-
       this.dispatchEvent(new SystemReadyEvent());
     }
   }
