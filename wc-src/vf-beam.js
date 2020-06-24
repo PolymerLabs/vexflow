@@ -31,7 +31,7 @@ export class VFBeam extends HTMLElement {
   createNotesAndBeam() {
     this.createNotes(this.notesText, this.stemDirection);
     this.createBeam();
-    
+
     const beamCreatedEvent = new CustomEvent('beamCreated', { bubbles: true });
     this.dispatchEvent(beamCreatedEvent);
   }

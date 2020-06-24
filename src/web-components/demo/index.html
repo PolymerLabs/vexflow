@@ -21,6 +21,23 @@
         </vf-stave>
       </vf-system>
     </vf-score>
+
+    <vf-score height=400>
+      <vf-system>
+        <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
+          <vf-voice stem='up'>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+        <!-- <vf-curve from='here' to='there'></vf-curve> -->
+        <vf-stave clef='bass'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+    </vf-score>
     
   </body>
 </html>
