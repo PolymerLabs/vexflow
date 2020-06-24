@@ -36,7 +36,12 @@ export class VFSystem extends HTMLElement {
   }
 
   setupSystem() {
-    this.system = this.vf.System({ x: parseInt(this.getAttribute('x')) || 10, y: 40, width: parseInt(this.getAttribute('width')) || 400 });
+    this.system = this.vf.System({ 
+      x: parseInt(this.getAttribute('x')) || 10, 
+      y: 40, 
+      width: parseInt(this.getAttribute('width')) || 400,
+      factory: this.vf 
+    });
   }
 
   registerStaves = () => {
@@ -49,11 +54,6 @@ export class VFSystem extends HTMLElement {
   }
 
   staveCreated = () => {
-    console.log('got stave created');
-    console.log('event.target');
-    console.log(event.target);
-    console.log('event.target.stave');
-    console.log(event.target.stave);
     const stave = event.target.stave;
     this.staveMap.set(event.target, [stave, event.target.voices]);
     this.numStaves--;
@@ -61,10 +61,7 @@ export class VFSystem extends HTMLElement {
   }
 
   staveAdded() {
-    console.log('checking if all staves back');
-    console.log('numStaves left = ' + this.numStaves);
     if (this.numStaves === 0) {
-      console.log('all staves received');
       // Order staves according to their slot order
       this.staveOrder.forEach(element => {
         const stave = this.staveMap.get(element)[0];
@@ -72,7 +69,13 @@ export class VFSystem extends HTMLElement {
         this.system.addStave({ stave: stave, voices: voices });
       })
 
-      this.vf.draw();
+      // Can't add connectors until the staves are added
+      if(this.hasAttribute('connected')) {
+        this.system.addConnector();
+      }
+
+      const systemCreatedEvent = new CustomEvent('systemCreated', { bubbles: true });
+      this.dispatchEvent(systemCreatedEvent);
     }
   }
 }

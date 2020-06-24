@@ -1,14 +1,14 @@
 <html>
   <head>
     <title>Vexflow Component</title>
-    <!-- <script type="module" src='./wc-src/vf-clef.js'></script> -->
-    <script type="module" src='./wc-src/vf-score.js'></script>
+    
     <script type="module" src='./wc-src/vf-system.js'></script>
     <script type="module" src='./wc-src/vf-stave.js'></script>
     <script type="module" src='./wc-src/vf-voice.js'></script>
     <script type="module" src='./wc-src/vf-tuplet.js'></script>
     <script type="module" src='./wc-src/vf-curve.js'></script>
     <script type="module" src='./wc-src/vf-beam.js'></script>
+    <script type="module" src='./wc-src/vf-score.js'></script>
   </head>
   <body>
     <!-- <div id="boo"></div>
@@ -24,14 +24,28 @@
     </vf-score> -->
 
     <vf-score>
-      <vf-system>
+      <vf-system connected>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
           </vf-voice>
         </vf-stave>
         <!-- <vf-curve from='here' to='there'></vf-curve> -->
-        <vf-stave clef='bass'>
+        <vf-stave clef='bass' timeSig='4/4' keySig='Bb'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+
+      <vf-system x=410 width=350>
+        <vf-stave clef='treble' x=410 width=350>
+          <vf-voice stem='up'>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+        <vf-stave clef='bass' x=410 width=350>
           <vf-voice stem='down'>
             <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
             <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>

@@ -18,10 +18,13 @@ export class VFScore extends HTMLElement {
     this.addEventListener('getRegistry', this.getRegistry);
     this.addEventListener('getFactory', this.getFactory);
     this.addEventListener('notesRegistered', this.notesRegistered);
+    this.addEventListener('systemCreated', this.systemAdded);
+    this.addEventListener('draw', this.draw);
   }
 
   connectedCallback() {
     this.setupVexflow(this.getAttribute('width') || 1000, this.getAttribute('height') || 1000);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystems);
     this.setupFactory();
   }
 
@@ -76,6 +79,25 @@ export class VFScore extends HTMLElement {
 
   draw = () => {
     this.vf.draw();
+  }
+
+  registerSystems = () => {
+    console.log('registering systems')
+    const systems = this.shadowRoot.querySelector('slot').assignedElements();
+    this.numSystems = systems.length;
+    this.checkSystems();
+  }
+
+  systemAdded = () => {
+    this.numSystems--;
+    console.log('adding a system, waiting for ' + this.numSystems + ' systems');
+    this.checkSystems();
+  }
+
+  checkSystems() {
+    if (this.numSystems === 0) {
+      this.vf.draw();
+    }
   }
 }
 
