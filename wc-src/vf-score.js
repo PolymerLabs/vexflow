@@ -108,6 +108,7 @@ export class VFScore extends HTMLElement {
       const system0 = this.vf.systems[0];
       system0.parts.forEach(part => {
         part.stave.addClef(part.stave.clef);
+        // part.stave.addTimeSignature(part.stave.timeSig);
       })
       this.vf.draw();
     }

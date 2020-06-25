@@ -11,10 +11,6 @@ template.innerHTML = `
   <slot></slot>
 `;
 
-function concat(a, b) {
-  return a.concat(b);
-}
-
 export class VFVoice extends HTMLElement {
   constructor() {
     super();
@@ -96,7 +92,7 @@ export class VFVoice extends HTMLElement {
     const tuplet = event.target;
     this.elementToNotesMap.set(tuplet, tuplet.tuplet);
     if (tuplet.beam) {
-      this.beams.push([tuplet.beam]);
+      this.beams.push(tuplet.beam);
     }
     this.numTuplets--;
     this.elementAdded(tuplet);
@@ -105,7 +101,7 @@ export class VFVoice extends HTMLElement {
   beamCreated = () => {
     const beam = event.target;
     this.elementToNotesMap.set(beam, beam.notes);
-    this.beams.push([beam.beam]);
+    this.beams.push(beam.beam);
     this.numBeams--;
     this.elementAdded(beam);
   }
@@ -132,13 +128,13 @@ export class VFVoice extends HTMLElement {
       console.log('all elements received');
       // Order notes according to their slot order
       this.elementOrder.forEach(element => {
-        this.notes.push(this.elementToNotesMap.get(element));
+        this.notes.push(...this.elementToNotesMap.get(element));
       })
 
-      this.notes = this.notes.reduce(concat);
-      if (this.beams.length > 0) {
-        this.beams = this.beams.reduce(concat);
-      }
+      // this.notes = this.notes.reduce(concat);
+      // if (this.beams.length > 0) {
+        // this.beams = this.beams.reduce(concat);
+      // }
       
       // Dispatches event to vf-stave to create and add the voice to the stave
       const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });

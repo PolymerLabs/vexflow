@@ -79,9 +79,9 @@ export class VFSystem extends HTMLElement {
         //   stave.addClef(element.clef);
         // }
 
-        // if (element.timeSig) {
-        //   stave.addTimeSignature(element.timeSig);
-        // }
+        if (element.timeSig) {
+          stave.addTimeSignature(element.timeSig);
+        }
         
         // if (element.keySig) {
         //   stave.addKeySignature(element.keySig);
