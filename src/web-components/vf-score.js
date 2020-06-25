@@ -218,20 +218,16 @@ export class VFScore extends HTMLElement {
     var lineNumber = 1;
     var adjustedLastLine = false;
     for (i = 1; i <= this.totalNumSystems; i++) {
-      console.log(`system number ${i}`);
       const system = systems[i-1];
 
       if (lineNumber === numLines && !adjustedLastLine) {
         const systemsLeft = this.totalNumSystems - (i - 1);
         this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
-        console.log(this.staveWidth);
         adjustedLastLine = true;
       }
 
       // TODO (ywsang): Figure out how to account for any added connectors that 
       // get drawn in front of the x position (e.g. brace, bracket)
-      console.log(`x = ${this.x}`);
-      console.log(`y = ${this.y}`);
       system.setupSystem(this.x, this.y, this.staveWidth);  
 
       this.x += this.staveWidth;
@@ -248,7 +244,6 @@ export class VFScore extends HTMLElement {
       this.y += this.getSystemLineHeight(lastSystem.childElementCount);
     }
 
-    console.log(this._height);
     this._renderer.resize(this._width, (this._height) ? this._height : this.y);
   }
 
