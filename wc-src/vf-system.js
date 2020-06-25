@@ -26,7 +26,7 @@ export class VFSystem extends HTMLElement {
     this.dispatchEvent(getFactoryEvent);
     this.vf = getFactoryEvent.detail.factory;
 
-    this.setupSystem();
+    // this.setupSystem();
 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerStaves);
   }
@@ -35,9 +35,10 @@ export class VFSystem extends HTMLElement {
     this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerStaves);
   }
 
-  setupSystem() {
+  setupSystem(x) {
+    this.x = x;
     this.system = this.vf.System({ 
-      x: parseInt(this.getAttribute('x')) || 10, 
+      x: x,
       y: 40, 
       width: parseInt(this.getAttribute('width')) || 400,
       factory: this.vf 
@@ -54,8 +55,9 @@ export class VFSystem extends HTMLElement {
   }
 
   staveCreated = () => {
-    const stave = event.target.stave;
-    this.staveMap.set(event.target, [stave, event.target.voices]);
+    // const stave = event.target.stave;
+    this.staveMap.set(event.target, event.target.voices);
+    // this.staveMap.set(event.target, [stave, event.target.voices]);
     this.numStaves--;
     this.staveAdded();
   }
@@ -63,10 +65,34 @@ export class VFSystem extends HTMLElement {
   staveAdded() {
     if (this.numStaves === 0) {
       // Order staves according to their slot order
-      this.staveOrder.forEach(element => {
-        const stave = this.staveMap.get(element)[0];
-        const voices = this.staveMap.get(element)[1];
+      this.staveOrder.forEach( element => {
+        const voices = this.staveMap.get(element);
+
+        const stave = this.vf.Stave({ 
+          x: this.x, y: 40, width: 400,
+          options: { 
+            left_bar: false 
+          },
+        }); // also sets this.vf.stave = this.stave and this.staves.push(stave);
+
+        // if (element.clef) {
+        //   stave.addClef(element.clef);
+        // }
+
+        // if (element.timeSig) {
+        //   stave.addTimeSignature(element.timeSig);
+        // }
+        
+        // if (element.keySig) {
+        //   stave.addKeySignature(element.keySig);
+        // }
+
+        stave.clef = element.clef;
+
         this.system.addStave({ stave: stave, voices: voices });
+        // const stave = this.staveMap.get(element)[0];
+        // const voices = this.staveMap.get(element)[1];
+        // this.system.addStave({ stave: stave, voices: voices });
       })
 
       // Can't add connectors until the staves are added

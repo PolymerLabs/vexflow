@@ -45,9 +45,9 @@ export class VFVoice extends HTMLElement {
     this.dispatchEvent(getScoreEvent);
     this.score = getScoreEvent.detail.score;
 
-    const getStaveEvent = new CustomEvent('getStave', { bubbles: true, detail: { score: null} });
-    this.dispatchEvent(getStaveEvent);
-    this.stave = getStaveEvent.detail.stave;
+    // const getStaveEvent = new CustomEvent('getStave', { bubbles: true, detail: { score: null} });
+    // this.dispatchEvent(getStaveEvent);
+    // this.stave = getStaveEvent.detail.stave;
 
     const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
     this.dispatchEvent(getFactoryEvent);
@@ -149,7 +149,7 @@ export class VFVoice extends HTMLElement {
   createNotes(line, stemDirection) {
     this.score.set({ stem: stemDirection });
     console.log('createNotes in vf-voice');
-    this.vf.stave = this.stave;
+    // this.vf.stave = this.stave;
     const staveNotes = this.score.notes(line);
     return staveNotes;
   }

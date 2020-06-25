@@ -11,6 +11,9 @@ export class VFScore extends HTMLElement {
   constructor() {
     super();
 
+    this.x = 10;
+    this.width = 400;
+
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
@@ -23,7 +26,7 @@ export class VFScore extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setupVexflow(this.getAttribute('width') || 1000, this.getAttribute('height') || 1000);
+    this.setupVexflow(this.getAttribute('width') || 1600, this.getAttribute('height') || 500);
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystems);
     this.setupFactory();
   }
@@ -85,6 +88,12 @@ export class VFScore extends HTMLElement {
     console.log('registering systems')
     const systems = this.shadowRoot.querySelector('slot').assignedElements();
     this.numSystems = systems.length;
+
+    systems.forEach(system => {
+      system.setupSystem(this.x);
+      this.x += this.width;
+    });
+
     this.checkSystems();
   }
 
@@ -96,6 +105,10 @@ export class VFScore extends HTMLElement {
 
   checkSystems() {
     if (this.numSystems === 0) {
+      const system0 = this.vf.systems[0];
+      system0.parts.forEach(part => {
+        part.stave.addClef(part.stave.clef);
+      })
       this.vf.draw();
     }
   }

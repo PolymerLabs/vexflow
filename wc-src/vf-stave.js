@@ -50,26 +50,26 @@ export class VFStave extends HTMLElement {
       time: this.timeSig || '4/4'
     });
 
-    this.stave = this.vf.Stave({ 
-      x: parseInt(this.getAttribute('x')) || 10, y: 40, width: parseInt(this.getAttribute('width')) || 400,
-      options: { 
-        left_bar: false 
-      },
-    }); // also sets this.vf.stave = this.stave and this.staves.push(stave);
+    // this.stave = this.vf.Stave({ 
+    //   x: parseInt(this.getAttribute('x')) || 10, y: 40, width: parseInt(this.getAttribute('width')) || 400,
+    //   options: { 
+    //     left_bar: false 
+    //   },
+    // }); // also sets this.vf.stave = this.stave and this.staves.push(stave);
 
     // TODO: change so attributes always need to be provided but not necessarily rendered? 
     // or add the clef component back, if clef component then render? 
-    if (this.clef) {
-      this.stave.addClef(this.clef);
-    }
+    // if (this.clef) {
+    //   this.stave.addClef(this.clef);
+    // }
 
-    if (this.timeSig) {
-      this.stave.addTimeSignature(this.timeSig);
-    }
+    // if (this.timeSig) {
+    //   this.stave.addTimeSignature(this.timeSig);
+    // }
     
-    if (this.keySig) {
-      this.stave.addKeySignature(this.keySig);
-    }
+    // if (this.keySig) {
+    //   this.stave.addKeySignature(this.keySig);
+    // }
     
     // this.stave.draw();
   }
@@ -130,9 +130,9 @@ export class VFStave extends HTMLElement {
     e.detail.score = this.score;
   }
 
-  getStave = (e) => {
-    e.detail.stave = this.stave;
-  }
+  // getStave = (e) => {
+  //   e.detail.stave = this.stave;
+  // }
 
 }
 
