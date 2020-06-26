@@ -2,7 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 
 import '../wc-src/index';
 
-describe('vf-curve', () => {
+describe('vf-beam', () => {
   it('simple beam', async() => {
     const el = await fixture(html`
       <vf-score>

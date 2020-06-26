@@ -8,7 +8,6 @@ export class VFBeam extends HTMLElement {
 
     this._vf = undefined;
     this._score = undefined;
-    console.log('vf-beam constructor');
   }
 
   connectedCallback() {
@@ -28,15 +27,12 @@ export class VFBeam extends HTMLElement {
     this.createNotes(this.notesText, this.stemDirection);
     this.createBeam();
     
-    console.log('dispatching beamCreated event');
-
     const beamCreatedEvent = new CustomEvent('beamCreated', { bubbles: true, detail: { beam: this } });
     this.dispatchEvent(beamCreatedEvent);
   }
 
-  createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
+  createNotes(line, stemDirection) {
     this._score.set({ stem: stemDirection });
-    console.log('create notes in vf-beam');
     const staveNotes = this._score.notes(line);
     this.notes = staveNotes;
   }

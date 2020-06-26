@@ -6,21 +6,21 @@ export class VFTuplet extends HTMLElement {
   constructor() {
     super();
 
+    // Defaults
     this.beamed = false;
+    this.stemDirection = 'up';
+
     this._score = undefined;
-    console.log('vf-tuplet constructor');
   }
 
   connectedCallback() {
     this.notesOccupied = this.getAttribute('notesOccupied');
     this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem') || this.stemDirection; // TODO: default stem direction
+    this.stemDirection = this.getAttribute('stem') || this.stemDirection;
     this.notesText = this.textContent;
 
     const vfTupletReadyEvent = new CustomEvent('vfTupletReady', { bubbles: true } );
     this.dispatchEvent(vfTupletReadyEvent);
-
-    console.log('vf-tuplet connectedCallback');
   }
 
   set score(value) {
@@ -45,7 +45,7 @@ export class VFTuplet extends HTMLElement {
     this.dispatchEvent(tupletCreatedEvent);
   }
 
-  createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
+  createNotes(line, stemDirection) {
     this._score.set({ stem: stemDirection });
     const staveNotes = this._score.notes(line);
     this.notes = staveNotes;

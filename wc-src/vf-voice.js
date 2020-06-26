@@ -31,8 +31,6 @@ export class VFVoice extends HTMLElement {
 
     this._vf = undefined;
     this._score = undefined;
-
-    console.log('vf-voice constructor');
   }
 
   connectedCallback() {
@@ -107,35 +105,13 @@ export class VFVoice extends HTMLElement {
     this.elementAdded(beam);
   }
 
-  /** For debugging what's in the map */
-  iterateOverMap() {
-    const it = this.elementToNotesMap.values();
-    const keysIt = this.elementToNotesMap.keys();
-    let notes = it.next();
-    let key = keysIt.next();
-    while (!notes.done) {
-      console.log(key);
-      console.log('value: ' + notes);
-      console.log(notes);
-      notes = it.next();
-      key = keysIt.next();
-    }
-  }
-
   elementAdded() {
     // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
-    console.log('checking if all elements are back');
     if (this.numTuplets === 0 && this.numBeams === 0) {
-      console.log('all elements received');
       // Order notes according to their slot order
       this.elementOrder.forEach(element => {
         this.notes.push(...this.elementToNotesMap.get(element));
       })
-
-      // this.notes = this.notes.reduce(concat);
-      // if (this.beams.length > 0) {
-        // this.beams = this.beams.reduce(concat);
-      // }
       
       // Dispatches event to vf-stave to create and add the voice to the stave
       const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
@@ -155,6 +131,21 @@ export class VFVoice extends HTMLElement {
       this._vf.renderQ.push(beam);
     })
     return beams;
+  }
+
+  /** For debugging what's in the map */
+  iterateOverMap() {
+    const it = this.elementToNotesMap.values();
+    const keysIt = this.elementToNotesMap.keys();
+    let notes = it.next();
+    let key = keysIt.next();
+    while (!notes.done) {
+      console.log(key);
+      console.log('value: ' + notes);
+      console.log(notes);
+      notes = it.next();
+      key = keysIt.next();
+    }
   }
 }
 

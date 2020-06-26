@@ -1,97 +1,41 @@
 <html>
   <head>
     <title>Vexflow Component</title>
-    <script type="module" src='./wc-src/vf-system.js'></script>
+    <script type="module" src='./wc-src/vf-score.js'></script>
     <script type="module" src='./wc-src/vf-stave.js'></script>
     <script type="module" src='./wc-src/vf-voice.js'></script>
     <script type="module" src='./wc-src/vf-tuplet.js'></script>
     <script type="module" src='./wc-src/vf-curve.js'></script>
     <script type="module" src='./wc-src/vf-beam.js'></script>
-    <script type="module" src='./wc-src/vf-score.js'></script>
   </head>
   <body>
     <!-- <div id="boo"></div>
     <script type="module" src="./app.js"></script> -->
 
-    <!-- <vf-score>
+    <vf-score>
       <vf-stave clef='treble' timeSig='4/4'>
         <vf-voice stem='up'>
-          <vf-tuplet stem='up'>F4/q, A4, B4</vf-tuplet>
-          <vf-tuplet beamed stem='up' notesOccupied='4'>G4/8, E4, G4</vf-tuplet>
+          <vf-tuplet stem>F4/q, A4[id='start'], B4</vf-tuplet>
+          <vf-tuplet beamed stem='up' notesOccupied='4'>G4/8, E4[id='end'], G4</vf-tuplet>
         </vf-voice>
       </vf-stave>
-    </vf-score> -->
-
-    <vf-score>
-      <vf-system connected>
-        <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
-          <vf-voice stem='up'>
-            C#5/q[id='here'], B4, A4/q., E4/8[id='there']
-          </vf-voice>
-        </vf-stave>
-        <vf-stave clef='bass' timeSig='4/4' keySig='Bb'>
-          <vf-voice stem='down'>
-            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
-            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
-          </vf-voice>
-        </vf-stave>
-      </vf-system>
-
-      <vf-system>
-        <vf-stave>
-          <vf-voice stem='up'>
-            <vf-tuplet stem='up'>C5/q, B4, A4</vf-tuplet>
-            E4/q, D4
-          </vf-voice>
-        </vf-stave>
-        <vf-stave clef='bass'>
-          <vf-voice stem='down'>
-            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
-            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
-          </vf-voice>
-        </vf-stave>
-      </vf-system>
-
-      <vf-system>
-        <vf-stave>
-          <vf-voice stem='up'>
-            C#5/q[id='here'], B4, A4/q., E4/8[id='there']
-          </vf-voice>
-        </vf-stave>
-        <vf-stave clef='bass'>
-          <vf-voice stem='down'>
-            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
-            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
-          </vf-voice>
-        </vf-stave>
-      </vf-system>
+      <vf-curve from='start' to='end'></vf-curve>
     </vf-score>
 
-    <!-- <vf-score>
-      <vf-system>
-        <vf-stave clef='treble' timeSig='4/4'>
-          <vf-voice stem='down'>
-            <vf-beam stem='down'>c4/8, f5, d5, g5</vf-beam>
-            <vf-beam stem='down'>d6/8, f5, d5, g5</vf-beam>
-          </vf-voice>
-        </vf-stave>
-      </vf-system>  
-    </vf-score> -->
-
-    <!-- <vf-score>
+    <vf-score>
       <vf-stave clef='bass' timeSig='3/4'>
         <vf-voice autoBeam>(ab2 c3 f3)/4, g3/16, f3, e3, d3, d3/q/r</vf-voice>
       </vf-stave>
-    </vf-score> -->
+    </vf-score>
 
-    <!-- <vf-score>
+    <vf-score>
       <vf-stave clef='treble' timeSig='4/4'>
         <vf-voice stem='down' autoBeam>c4/8, f5, d5, g5, d6/8, f5, d5, g5</vf-voice>
       </vf-stave>
-    </vf-score> -->
+    </vf-score>
 
-    <!-- <vf-score>
-      <vf-stave clef='treble' timeSig='3/8'>
+    <vf-score>
+      <vf-stave keySig='Bb' clef='treble' timeSig='3/8'>
         <vf-voice stem='up'>
           <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
           <vf-tuplet beamed stem='down'>A4/8, F4, A4[id='end'], F4, A4, F4</vf-tuplet>
@@ -105,7 +49,7 @@
       <vf-stave clef='treble' timeSig='4/4'>
           <vf-voice autoBeam>e##5/8., bb4/16, c4/8, d4/16, eb4, d4, e#4, g4/32, a4, g4/16, d4/q</vf-voice>
       </vf-stave>
-    </vf-score> -->
+    </vf-score>
 
   </body>
 </html>

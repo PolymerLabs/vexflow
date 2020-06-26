@@ -19,11 +19,11 @@ export class VFStave extends HTMLElement {
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-    this.addEventListener('notesCreated', this.addVoice);
     this.addEventListener('vfVoiceReady', this.setScore);
     this.addEventListener('vfTupletReady', this.setScore);
     this.addEventListener('vfBeamReady', this.setScore);
-    console.log('vf-stave constructor')
+
+    this.addEventListener('notesCreated', this.addVoice);
   }
 
   connectedCallback() {
@@ -35,7 +35,10 @@ export class VFStave extends HTMLElement {
     this.dispatchEvent(vfStaveReadyEvent);
 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerVoices);
-    console.log('vf-stave connectedCallback')
+  }
+
+  disconnectedCallback() {
+    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerVoices);
   }
 
   set vf(value) {
@@ -45,11 +48,6 @@ export class VFStave extends HTMLElement {
 
   set registry(value) {
     this._registry = value;
-    this.setupStave();
-  }
-
-  disconnectedCallback() {
-    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerVoices);
   }
 
   setupStave() {
@@ -59,28 +57,25 @@ export class VFStave extends HTMLElement {
       time: this.timeSig || '4/4'
     });
 
-    // this.stave = this.vf.Stave({ 
-    //   x: parseInt(this.getAttribute('x')) || 10, y: 40, width: parseInt(this.getAttribute('width')) || 400,
-    //   options: { 
-    //     left_bar: false 
-    //   },
-    // }); // also sets this.vf.stave = this.stave and this.staves.push(stave);
+    this.stave = this._vf.Stave({ 
+      x: parseInt(this.getAttribute('x')) || 10, 
+      y: 40, 
+      width: parseInt(this.getAttribute('width')) || 400,
+    });
 
-    // TODO: change so attributes always need to be provided but not necessarily rendered? 
-    // or add the clef component back, if clef component then render? 
-    // if (this.clef) {
-    //   this.stave.addClef(this.clef);
-    // }
+    if (this.clef) {
+      this.stave.addClef(this.clef);
+    }
 
-    // if (this.timeSig) {
-    //   this.stave.addTimeSignature(this.timeSig);
-    // }
+    if (this.timeSig) {
+      this.stave.addTimeSignature(this.timeSig);
+    }
     
-    // if (this.keySig) {
-    //   this.stave.addKeySignature(this.keySig);
-    // }
+    if (this.keySig) {
+      this.stave.addKeySignature(this.keySig);
+    }
     
-    // this.stave.draw();
+    this.stave.draw();
   }
   
   /** slotchange event listener */
@@ -88,7 +83,7 @@ export class VFStave extends HTMLElement {
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
 
-    if (this.voices.length === this.numVoices) {
+    if (this._vf && this._registry && this.voices.length === this.numVoices) {
       this.formatAndDrawVoices();
     }
   }
@@ -96,8 +91,6 @@ export class VFStave extends HTMLElement {
   addVoice = (e) => {
     const notes = e.detail.notes;
     this.registerNotes(notes);
-    console.log('notes: ');
-    console.log(notes);
     const beams = e.detail.beams; 
     const voice = this.createVoiceFromNotes(notes);
 
@@ -105,7 +98,7 @@ export class VFStave extends HTMLElement {
     this.beams = this.beams.concat(beams);
 
     // Make sure all voices are created first, then format & draw to make sure alignment is correct
-    if (this.voices.length === this.numVoices) {
+    if (this._vf && this._registry && this.voices.length === this.numVoices) {
       this.formatAndDrawVoices();
     }
   }
@@ -121,19 +114,15 @@ export class VFStave extends HTMLElement {
   }
 
   createVoiceFromNotes(staveNotes) {
-    console.log('creating voice from notes');
-    console.log('timeSig = ' + this.timeSig);
     return this.score.voice(staveNotes);
   }
 
   formatAndDrawVoices() {
-    // var formatter = new Vex.Flow.Formatter()
-    // formatter.joinVoices(this.voices);
-    // formatter.formatToStave(this.voices, this.stave);
-    // this.vf.draw();
+    var formatter = new Vex.Flow.Formatter()
+    formatter.joinVoices(this.voices);
+    formatter.formatToStave(this.voices, this.stave);
+    this._vf.draw();
 
-    const staveCreatedEvent = new CustomEvent('staveCreated', { bubbles: true });
-    this.dispatchEvent(staveCreatedEvent);
     // Tell vf-score that notes from all voices are registered and formatted
     const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
     this.dispatchEvent(notesRegisteredEvent);
