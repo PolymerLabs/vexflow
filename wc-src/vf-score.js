@@ -23,6 +23,9 @@ export class VFScore extends HTMLElement {
     this.addEventListener('notesRegistered', this.notesRegistered);
     this.addEventListener('systemCreated', this.systemAdded);
     this.addEventListener('draw', this.draw);
+
+    this.addEventListener('vfVoiceReady', this.setFactory);
+    this.addEventListener('vfStaveReady', this.setFactory);
   }
 
   connectedCallback() {
@@ -112,6 +115,10 @@ export class VFScore extends HTMLElement {
       })
       this.vf.draw();
     }
+  }
+
+  setFactory = () => {
+    event.target.vf = this.vf;
   }
 }
 

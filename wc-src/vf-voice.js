@@ -21,13 +21,16 @@ export class VFVoice extends HTMLElement {
     // Defaults
     this.stem = 'up';
     this.autoBeam = false;
+
     this.numBeams = 0;
     this.numTuplets = 0;
     this.elementToNotesMap = new Map();
     this.elementOrder = new Set();
-
     this.notes = [];
     this.beams = [];
+
+    this._vf = undefined;
+    this._score = undefined;
 
     console.log('vf-voice constructor');
   }
@@ -37,62 +40,77 @@ export class VFVoice extends HTMLElement {
     this.autoBeam = this.hasAttribute('autoBeam');
     this.notesText = this.textContent.trim();
 
-    const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
-    this.dispatchEvent(getScoreEvent);
-    this.score = getScoreEvent.detail.score;
+    // const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
+    // this.dispatchEvent(getScoreEvent);
+    // this.score = getScoreEvent.detail.score;
 
-    // const getStaveEvent = new CustomEvent('getStave', { bubbles: true, detail: { score: null} });
-    // this.dispatchEvent(getStaveEvent);
-    // this.stave = getStaveEvent.detail.stave;
+    // const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
+    // this.dispatchEvent(getFactoryEvent);
+    // this.vf = getFactoryEvent.detail.factory;
 
-    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
-    this.dispatchEvent(getFactoryEvent);
-    this.vf = getFactoryEvent.detail.factory;
+    const vfVoiceReadyEvent = new CustomEvent('vfVoiceReady', { bubbles: true });
+    this.dispatchEvent(vfVoiceReadyEvent);
 
     this.addEventListener('tupletCreated', this.tupletCreated);
     this.addEventListener('beamCreated', this.beamCreated);
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerNodes);
+    // this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerNodes);
   }
 
   disconnectedCallback() {
-    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerNodes);
+    // this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerNodes);
+  }
+
+  set vf(value) {
+    this._vf = value;
+    this.registerNodes();
+  }
+
+  set score(value) {
+    this._score = value;
+    this.registerNodes();
   }
 
   registerNodes = () => {
-    const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
-    assignedNodes.forEach(node => { 
-      switch (node.nodeName) {
-        case '#text':
-          const notesText = node.textContent.trim();
-          if (notesText) {
-            const notes = this.createNotes(notesText, this.stem);
-            this.elementOrder.add(node);
-            this.elementToNotesMap.set(node, notes);
-            if (this.autoBeam) {
-              this.beams.push(this.autoGenerateBeams(notes));
+    if (this._vf && this._score) {
+      console.log('iterating over voice nodes');
+      const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
+      assignedNodes.forEach(node => { 
+        switch (node.nodeName) {
+          case '#text':
+            console.log('node: #text')
+            const notesText = node.textContent.trim();
+            if (notesText) {
+              const notes = this.createNotes(notesText, this.stem);
+              this.elementOrder.add(node);
+              this.elementToNotesMap.set(node, notes);
+              if (this.autoBeam) {
+                this.beams.push(...this.autoGenerateBeams(notes));
+              }
             }
-          }
-          break;
-        case 'VF-TUPLET':
-          this.numTuplets++;
-          this.elementOrder.add(node);
-          break;
-        case 'VF-BEAM':
-          this.numBeams++;
-          this.elementOrder.add(node);
-          break;
-        default:
-          break;
-      }
-    });
-    this.elementAdded();
+            break;
+          case 'VF-TUPLET':
+            console.log('node: vf-tuplet')
+            this.numTuplets++;
+            this.elementOrder.add(node);
+            break;
+          case 'VF-BEAM':
+            console.log('node: vf-beam')
+            this.numBeams++;
+            this.elementOrder.add(node);
+            break;
+          default:
+            break;
+        }
+      });
+      this.elementAdded();
+    }
   }
 
   tupletCreated = () => {
     const tuplet = event.target;
     this.elementToNotesMap.set(tuplet, tuplet.tuplet);
     if (tuplet.beam) {
-      this.beams.push(tuplet.beam);
+      this.beams.push(...tuplet.beam);
     }
     this.numTuplets--;
     this.elementAdded(tuplet);
@@ -101,7 +119,7 @@ export class VFVoice extends HTMLElement {
   beamCreated = () => {
     const beam = event.target;
     this.elementToNotesMap.set(beam, beam.notes);
-    this.beams.push(beam.beam);
+    this.beams.push(...beam.beam);
     this.numBeams--;
     this.elementAdded(beam);
   }
@@ -137,24 +155,24 @@ export class VFVoice extends HTMLElement {
       // }
       
       // Dispatches event to vf-stave to create and add the voice to the stave
+      console.log('dispatching notes created to vf-stave');
       const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
       this.dispatchEvent(notesAndBeamsCreatedEvent);
     }
   }
 
   createNotes(line, stemDirection) {
-    this.score.set({ stem: stemDirection });
+    this._score.set({ stem: stemDirection });
     console.log('createNotes in vf-voice');
-    // this.vf.stave = this.stave;
-    const staveNotes = this.score.notes(line);
+    const staveNotes = this._score.notes(line);
     return staveNotes;
   }
 
   autoGenerateBeams(notes) {
     const beams = Vex.Flow.Beam.generateBeams(notes);
-    beams.forEach(beam => {
-      this.vf.renderQ.push(beam);
-    });
+    beams.forEach( beam => {
+      this._vf.renderQ.push(beam);
+    })
     return beams;
   }
 }

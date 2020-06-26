@@ -41,3 +41,8 @@ vf.Curve({
 });
 
 vf.draw();
+
+
+// system.addStave({
+//   voices: [score.voice(score.notes('C#5/q, B4, A4, G#4'))]
+// }).addClef('treble').addTimeSignature('4/4');

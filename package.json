@@ -77,7 +77,6 @@
     "tablature"
   ],
   "dependencies": {
-    "diff-dom": "^4.1.6",
     "es-dev-server": "^1.55.0"
   }
 }

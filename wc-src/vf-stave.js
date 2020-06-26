@@ -13,6 +13,7 @@ export class VFStave extends HTMLElement {
     // Defaults
     this.voices = [];
     this.beams = [];
+    this._vf = undefined;
 
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
@@ -20,7 +21,7 @@ export class VFStave extends HTMLElement {
     this.addEventListener('getScore', this.getScore);
     this.addEventListener('getStave', this.getStave);
     this.addEventListener('notesCreated', this.addVoice);
-
+    this.addEventListener('vfVoiceReady', this.setScore);
     console.log('vf-stave constructor')
   }
 
@@ -29,22 +30,28 @@ export class VFStave extends HTMLElement {
     this.timeSig = this.getAttribute('timeSig');
     this.keySig = this.getAttribute('keySig');
 
-    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
-    this.dispatchEvent(getFactoryEvent);
-    this.vf = getFactoryEvent.detail.factory;
+    const vfStaveReadyEvent = new CustomEvent('vfStaveReady', { bubbles: true });
+    this.dispatchEvent(vfStaveReadyEvent);
 
     const getRegistryEvent = new CustomEvent('getRegistry', { bubbles: true, detail: { registry: null } });
     this.dispatchEvent(getRegistryEvent);
     this.registry = getRegistryEvent.detail.registry;
 
-    this.setupStave();
-
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.voicesRegistered);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerVoices);
     console.log('vf-stave connectedCallback')
   }
 
-  setupStave() { // add attributes for stave size?  
-    this.score = this.vf.EasyScore();
+  set vf(value) {
+    this._vf = value;
+    this.setupStave();
+  }
+
+  disconnectedCallback() {
+    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerVoices);
+  }
+
+  setupStave() {
+    this.score = this._vf.EasyScore();
     this.score.set({
       clef: this.clef || 'treble',
       time: this.timeSig || '4/4'
@@ -73,8 +80,9 @@ export class VFStave extends HTMLElement {
     
     // this.stave.draw();
   }
-
-  voicesRegistered = () => {
+  
+  /** slotchange event listener */
+  registerVoices = () => {
     const voiceSlots = this.shadowRoot.querySelector('slot').assignedElements().filter( e => e.nodeName === 'VF-VOICE');
     this.numVoices = voiceSlots.length;
 
@@ -86,6 +94,8 @@ export class VFStave extends HTMLElement {
   addVoice = (e) => {
     const notes = e.detail.notes;
     this.registerNotes(notes);
+    console.log('notes: ');
+    console.log(notes);
     const beams = e.detail.beams; 
     const voice = this.createVoiceFromNotes(notes);
 
@@ -110,6 +120,7 @@ export class VFStave extends HTMLElement {
 
   createVoiceFromNotes(staveNotes) {
     console.log('creating voice from notes');
+    console.log('timeSig = ' + this.timeSig);
     return this.score.voice(staveNotes);
   }
 
@@ -130,9 +141,10 @@ export class VFStave extends HTMLElement {
     e.detail.score = this.score;
   }
 
-  // getStave = (e) => {
-  //   e.detail.stave = this.stave;
-  // }
+  /** Sets the score instance of the component that dispatched the event */
+  setScore = () => {
+    event.target.score = this.score;
+  }
 
 }
 
