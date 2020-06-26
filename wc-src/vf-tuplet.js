@@ -7,27 +7,31 @@ export class VFTuplet extends HTMLElement {
     super();
 
     this.beamed = false;
+    this._score = undefined;
     console.log('vf-tuplet constructor');
   }
 
   connectedCallback() {
     this.notesOccupied = this.getAttribute('notesOccupied');
     this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem') || this.stemDirection;
+    this.stemDirection = this.getAttribute('stem') || this.stemDirection; // TODO: default stem direction
     this.notesText = this.textContent;
 
-    const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
-    this.dispatchEvent(getScoreEvent);
-    this.score = getScoreEvent.detail.score;
+    const vfTupletReadyEvent = new CustomEvent('vfTupletReady', { bubbles: true } );
+    this.dispatchEvent(vfTupletReadyEvent);
 
-    this.createTuplet();
     console.log('vf-tuplet connectedCallback');
+  }
+
+  set score(value) {
+    this._score = value;
+    this.createTuplet();
   }
 
   createTuplet() {
     this.createNotes(this.notesText, this.stemDirection);
 
-    this.tuplet = this.score.tuplet(this.notes,
+    this.tuplet = this._score.tuplet(this.notes,
       { notes_occupied: this.notesOccupied,
         bracketed: !this.beamed,
         location: this.stemDirection === 'down' ? -1 : 1
@@ -37,21 +41,18 @@ export class VFTuplet extends HTMLElement {
       this.createBeam();
     }
 
-    // console.log('created tuplet');
-    // console.log(this);
-    // console.log(this.tuplet);
     const tupletCreatedEvent = new CustomEvent('tupletCreated', { bubbles: true, detail: { tuplet: this }});
     this.dispatchEvent(tupletCreatedEvent);
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
-    this.score.set({ stem: stemDirection });
-    const staveNotes = this.score.notes(line);
+    this._score.set({ stem: stemDirection });
+    const staveNotes = this._score.notes(line);
     this.notes = staveNotes;
   }
 
   createBeam() {
-    const beam = this.score.beam(this.notes);
+    const beam = this._score.beam(this.notes);
     this.beam = beam;
   }
 }

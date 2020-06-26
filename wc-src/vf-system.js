@@ -22,26 +22,22 @@ export class VFSystem extends HTMLElement {
   }
 
   connectedCallback() {
-    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
-    this.dispatchEvent(getFactoryEvent);
-    this.vf = getFactoryEvent.detail.factory;
-
-    // this.setupSystem();
-
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerStaves);
+    const vfSystemReadyEvent = new CustomEvent('vfSystemReady', { bubbles: true });
+    this.dispatchEvent(vfSystemReadyEvent);
   }
 
-  disconnectedCallback() {
-    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerStaves);
+  set vf(value) {
+    this._vf = value;
+    this.registerStaves();
   }
 
   setupSystem(x) {
     this.x = x;
-    this.system = this.vf.System({ 
+    this.system = this._vf.System({ 
       x: x,
       y: 40, 
       width: parseInt(this.getAttribute('width')) || 400,
-      factory: this.vf 
+      factory: this._vf 
     });
   }
 
@@ -68,7 +64,7 @@ export class VFSystem extends HTMLElement {
       this.staveOrder.forEach( element => {
         const voices = this.staveMap.get(element);
 
-        const stave = this.vf.Stave({ 
+        const stave = this._vf.Stave({ 
           x: this.x, y: 40, width: 400,
           options: { 
             left_bar: false 

@@ -14,14 +14,15 @@ export class VFStave extends HTMLElement {
     this.voices = [];
     this.beams = [];
     this._vf = undefined;
+    this._registry = undefined;
 
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-    this.addEventListener('getScore', this.getScore);
-    this.addEventListener('getStave', this.getStave);
     this.addEventListener('notesCreated', this.addVoice);
     this.addEventListener('vfVoiceReady', this.setScore);
+    this.addEventListener('vfTupletReady', this.setScore);
+    this.addEventListener('vfBeamReady', this.setScore);
     console.log('vf-stave constructor')
   }
 
@@ -33,16 +34,17 @@ export class VFStave extends HTMLElement {
     const vfStaveReadyEvent = new CustomEvent('vfStaveReady', { bubbles: true });
     this.dispatchEvent(vfStaveReadyEvent);
 
-    const getRegistryEvent = new CustomEvent('getRegistry', { bubbles: true, detail: { registry: null } });
-    this.dispatchEvent(getRegistryEvent);
-    this.registry = getRegistryEvent.detail.registry;
-
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerVoices);
     console.log('vf-stave connectedCallback')
   }
 
   set vf(value) {
     this._vf = value;
+    this.setupStave();
+  }
+
+  set registry(value) {
+    this._registry = value;
     this.setupStave();
   }
 
@@ -113,7 +115,7 @@ export class VFStave extends HTMLElement {
     staveNotes.forEach( note => {
       const id = note.attrs.id;
       if (!id.includes('auto')) { 
-        this.registry.register(note, id); 
+        this._registry.register(note, id); 
       }
     })
   }
@@ -135,10 +137,6 @@ export class VFStave extends HTMLElement {
     // Tell vf-score that notes from all voices are registered and formatted
     const notesRegisteredEvent = new CustomEvent('notesRegistered', { bubbles: true });
     this.dispatchEvent(notesRegisteredEvent);
-  }
-
-  getScore = (e) => {
-    e.detail.score = this.score;
   }
 
   /** Sets the score instance of the component that dispatched the event */

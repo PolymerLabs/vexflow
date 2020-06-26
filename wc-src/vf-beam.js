@@ -5,6 +5,9 @@ export class VFBeam extends HTMLElement {
     super();
 
     this.stemDirection = 'up';
+
+    this._vf = undefined;
+    this._score = undefined;
     console.log('vf-beam constructor');
   }
 
@@ -12,18 +15,12 @@ export class VFBeam extends HTMLElement {
     this.stemDirection = this.getAttribute('stem') || this.stemDirection;
     this.notesText = this.textContent;
 
-    const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
-    this.dispatchEvent(getScoreEvent);
-    this.score = getScoreEvent.detail.score;
+    const vfBeamReadyEvent = new CustomEvent('vfBeamReady', { bubbles: true } );
+    this.dispatchEvent(vfBeamReadyEvent);
+  }
 
-    const getStaveEvent = new CustomEvent('getStave', { bubbles: true, detail: { score: null} });
-    this.dispatchEvent(getStaveEvent);
-    this.stave = getStaveEvent.detail.stave;
-
-    const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
-    this.dispatchEvent(getFactoryEvent);
-    this.vf = getFactoryEvent.detail.factory;
-
+  set score(value) {
+    this._score = value;
     this.createNotesAndBeam();
   }
 
@@ -38,15 +35,14 @@ export class VFBeam extends HTMLElement {
   }
 
   createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
-    this.score.set({ stem: stemDirection });
+    this._score.set({ stem: stemDirection });
     console.log('create notes in vf-beam');
-    this.vf.stave = this.stave;
-    const staveNotes = this.score.notes(line);
+    const staveNotes = this._score.notes(line);
     this.notes = staveNotes;
   }
 
   createBeam() {
-    const beam = this.score.beam(this.notes);
+    const beam = this._score.beam(this.notes);
     this.beam = beam;
   }
 }

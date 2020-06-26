@@ -17,15 +17,14 @@ export class VFScore extends HTMLElement {
     this.attachShadow({ mode:'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-    this.addEventListener('getContext', this.getContext);
-    this.addEventListener('getRegistry', this.getRegistry);
-    this.addEventListener('getFactory', this.getFactory);
     this.addEventListener('notesRegistered', this.notesRegistered);
     this.addEventListener('systemCreated', this.systemAdded);
     this.addEventListener('draw', this.draw);
 
     this.addEventListener('vfVoiceReady', this.setFactory);
     this.addEventListener('vfStaveReady', this.setFactory);
+    this.addEventListener('vfStaveReady', this.setRegistry);
+    this.addEventListener('vfSystemReady', this.setFactory);
   }
 
   connectedCallback() {
@@ -41,27 +40,11 @@ export class VFScore extends HTMLElement {
     this.context = renderer.getContext();
 
     this.registry = new Vex.Flow.Registry();
-    // Vex.Flow.Registry.enableDefaultRegistry(this.registry);
   }
 
   setupFactory() {
     this.vf = new Vex.Flow.Factory({renderer: {elementId: null}});
     this.vf.setContext(this.context);
-  }
-
-  /** Returns the renderer context for this vf-score component */
-  getContext = (e) => {
-    e.detail.context = this.context;
-  }
-
-  /** Returns the VF.Factory for this vf-score component */
-  getFactory = (e) => {
-    e.detail.factory = this.vf;
-  }
-
-  /** Returns the registry for this vf-score component */
-  getRegistry = (e) => {
-    e.detail.registry = this.registry;
   }
 
   notesRegistered = () => {
@@ -79,7 +62,6 @@ export class VFScore extends HTMLElement {
   }
 
   getNoteFromId(id) {
-    // return Vex.Flow.Registry.getDefaultRegistry().getElementById(id);
     return this.registry.getElementById(id);
   }
 
@@ -117,8 +99,14 @@ export class VFScore extends HTMLElement {
     }
   }
 
+  /** Sets the factory instance of the component that dispatched the event */
   setFactory = () => {
     event.target.vf = this.vf;
+  }
+
+  /** Sets the registry instance of the component that dispatched the event */
+  setRegistry = () => {
+    event.target.registry = this.registry;
   }
 }
 

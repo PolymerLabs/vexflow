@@ -40,24 +40,11 @@ export class VFVoice extends HTMLElement {
     this.autoBeam = this.hasAttribute('autoBeam');
     this.notesText = this.textContent.trim();
 
-    // const getScoreEvent = new CustomEvent('getScore', { bubbles: true, detail: { score: null } });
-    // this.dispatchEvent(getScoreEvent);
-    // this.score = getScoreEvent.detail.score;
-
-    // const getFactoryEvent = new CustomEvent('getFactory', { bubbles: true, detail: { factory: null } });
-    // this.dispatchEvent(getFactoryEvent);
-    // this.vf = getFactoryEvent.detail.factory;
-
     const vfVoiceReadyEvent = new CustomEvent('vfVoiceReady', { bubbles: true });
     this.dispatchEvent(vfVoiceReadyEvent);
 
     this.addEventListener('tupletCreated', this.tupletCreated);
     this.addEventListener('beamCreated', this.beamCreated);
-    // this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerNodes);
-  }
-
-  disconnectedCallback() {
-    // this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerNodes);
   }
 
   set vf(value) {
@@ -72,12 +59,10 @@ export class VFVoice extends HTMLElement {
 
   registerNodes = () => {
     if (this._vf && this._score) {
-      console.log('iterating over voice nodes');
       const assignedNodes = this.shadowRoot.querySelector('slot').assignedNodes();
       assignedNodes.forEach(node => { 
         switch (node.nodeName) {
           case '#text':
-            console.log('node: #text')
             const notesText = node.textContent.trim();
             if (notesText) {
               const notes = this.createNotes(notesText, this.stem);
@@ -89,12 +74,10 @@ export class VFVoice extends HTMLElement {
             }
             break;
           case 'VF-TUPLET':
-            console.log('node: vf-tuplet')
             this.numTuplets++;
             this.elementOrder.add(node);
             break;
           case 'VF-BEAM':
-            console.log('node: vf-beam')
             this.numBeams++;
             this.elementOrder.add(node);
             break;
@@ -155,7 +138,6 @@ export class VFVoice extends HTMLElement {
       // }
       
       // Dispatches event to vf-stave to create and add the voice to the stave
-      console.log('dispatching notes created to vf-stave');
       const notesAndBeamsCreatedEvent = new CustomEvent('notesCreated', { bubbles: true, detail: { notes: this.notes, beams: this.beams } });
       this.dispatchEvent(notesAndBeamsCreatedEvent);
     }
@@ -163,7 +145,6 @@ export class VFVoice extends HTMLElement {
 
   createNotes(line, stemDirection) {
     this._score.set({ stem: stemDirection });
-    console.log('createNotes in vf-voice');
     const staveNotes = this._score.notes(line);
     return staveNotes;
   }
