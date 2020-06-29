@@ -265,7 +265,7 @@ export class VFScore extends HTMLElement {
   systemAdded() {
     if (this.totalNumSystems === this._systemsAdded) {
       this.addSystemConnectors();
-      // this.addCurves();
+      this.addCurves();
       this.vf.draw();
     }
   }
@@ -283,26 +283,44 @@ export class VFScore extends HTMLElement {
     }
   }
 
-  // addCurves() {
-  //   const curves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-CURVE');
-  //   curves.forEach(curve => {
-  //     curve.addCurve();
-  //   })
-  // }
+  addCurves() {
+    const curves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-CURVE');
+    curves.forEach(curve => {
+      curve.addCurve();
+    })
+  }
 
   /** Gets the time signature of the previous system, dispatched from a vf-stave in a vf-system */
   getPrevTimeSig = () => {
-    const prevSystem = event.target.parentElement.previousElementSibling;
+    // event.target is a vf-stave
+    const system = event.target.parentElement;
+    const index = this.getIndexPosition(system);
+    const prevSystem = this.getPrevSystem(index, system.parentElement.children);
     event.target.timeSig = prevSystem.firstElementChild.timeSig;
   }
 
   /** Gets the clef of the stave at index = event.detail.staveIndex of the previous system */
   getPrevClef = () => {
-    const index = event.detail.staveIndex;
-    const prevSystem = event.target.previousElementSibling;
-    event.target.children[index].clef = prevSystem.children[index].clef;
+    // event.target is a vf-system
+    const staveIndex = event.detail.staveIndex;
+    const systemIndex = this.getIndexPosition(event.target);
+    const prevSystem = this.getPrevSystem(systemIndex, event.target.parentElement.children);
+    // const prevSystem = event.target.previousElementSibling;
+    event.target.children[staveIndex].clef = prevSystem.children[staveIndex].clef;
   }
 
+  getIndexPosition(element) {
+    return [...element.parentElement.children].indexOf(element);
+  }
+
+  getPrevSystem(index, children) {
+    var i;
+    for (i = index-1; i >= 0; i--) {
+      if (children[i].nodeName === 'VF-SYSTEM') {
+        return children[i];
+      }
+    }
+  }
   /** 
    * Sets the factory instance of the component that dispatched the event. 
    */
