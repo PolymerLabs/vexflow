@@ -5,7 +5,8 @@
   </head>
   <body>
     
-    <vf-score x=0 height=300 renderer='canvas'>
+    <!-- Simple Example -->
+    <!-- <vf-score x=0 height=300 renderer='canvas'>
       <vf-system>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice autoBeam>
@@ -20,16 +21,16 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score>
+    </vf-score> -->
 
-    <vf-score systemsPerLine=2 width=800>
+    <!-- Two Systems, One Line -->
+    <!-- <vf-score systemsPerLine=2 width=800>
       <vf-system connected>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
           </vf-voice>
         </vf-stave>
-        <!-- <vf-curve from='here' to='there'></vf-curve> -->
         <vf-stave clef='bass' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='down'>
             <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
@@ -51,9 +52,10 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score>
+    </vf-score> -->
     
-    <vf-score>
+
+    <vf-score systemsPerLine=2 width=700>
       <vf-system connected>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
@@ -89,6 +91,69 @@
           </vf-voice>
         </vf-stave>
         <vf-stave clef='bass'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+    </vf-score>
+
+    <!-- Clef/TimeSig Inference -->
+    <vf-score width=800 systemsPerLine=2>
+      <vf-system connected>
+        <vf-stave clef='treble' timeSig='5/4' keySig='Bb'>
+          <vf-voice stem='up'>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there'], E4/q
+          </vf-voice>
+        </vf-stave>
+        <vf-stave clef='bass' timeSig='5/4' keySig='Bb'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+            g3/q
+          </vf-voice>
+        </vf-stave>
+        <vf-curve from='here' to='there'></vf-curve>
+      </vf-system>
+
+      <vf-system>
+        <vf-stave>
+          <vf-voice stem='up'>
+            <vf-tuplet stem='up'>C5/q, B4, A4</vf-tuplet>
+            E4/q, D4, D4
+          </vf-voice>
+        </vf-stave>
+        <vf-stave>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+            g3/q
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+
+      <vf-system>
+        <vf-stave timeSig='4/4' keySig='Eb'>
+          <vf-voice stem='up'>
+            C#5/q, B4, A4/q., E4/8
+          </vf-voice>
+        </vf-stave>
+        <vf-stave timeSig='4/4' keySig='Eb'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
+            <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+
+      <vf-system>
+        <vf-stave>
+          <vf-voice stem='up'>
+            C#5/q, B4, A4/q., E4/8
+          </vf-voice>
+        </vf-stave>
+        <vf-stave>
           <vf-voice stem='down'>
             <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
             <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>

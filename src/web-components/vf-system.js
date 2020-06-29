@@ -41,6 +41,8 @@ export class VFSystem extends HTMLElement {
     // that vf-staves information to the staveToVoiceMap and update the 
     // numStaves counter. 
     this.addEventListener(StaveReadyEvent.eventName, this._staveCreated);
+
+    this.addEventListener('getPrevClef', this.getPrevClef);
   }
 
   connectedCallback() {
@@ -165,6 +167,14 @@ export class VFSystem extends HTMLElement {
       // Tells parent (vf-score) that this system has finished adding its staves
       this.dispatchEvent(new SystemReadyEvent());
     }
+  }
+
+  getPrevClef = (event) => {
+    event.stopPropagation;
+    const index = [...event.target.parentElement.children].indexOf(event.target);
+
+    const getPrevClefEvent = new CustomEvent('getPrevClefForStave', { bubbles: true, detail: {staveIndex: index } });
+    this.dispatchEvent(getPrevClefEvent);
   }
 }
 

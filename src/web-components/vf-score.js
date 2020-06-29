@@ -108,6 +108,9 @@ export class VFScore extends HTMLElement {
 
     // The 'vf-stave-added' event is dispatched only by the vf-stave child. 
     this.addEventListener(StaveAddedEvent.eventName, this.setRegistry);
+ 
+    this.addEventListener('getPrevTimeSig', this.getPrevTimeSig);
+    this.addEventListener('getPrevClefForStave', this.getPrevClef);
   }
 
   connectedCallback() {
@@ -286,6 +289,19 @@ export class VFScore extends HTMLElement {
   //     curve.addCurve();
   //   })
   // }
+
+  /** Gets the time signature of the previous system, dispatched from a vf-stave in a vf-system */
+  getPrevTimeSig = () => {
+    const prevSystem = event.target.parentElement.previousElementSibling;
+    event.target.timeSig = prevSystem.firstElementChild.timeSig;
+  }
+
+  /** Gets the clef of the stave at index = event.detail.staveIndex of the previous system */
+  getPrevClef = () => {
+    const index = event.detail.staveIndex;
+    const prevSystem = event.target.previousElementSibling;
+    event.target.children[index].clef = prevSystem.children[index].clef;
+  }
 
   /** 
    * Sets the factory instance of the component that dispatched the event. 

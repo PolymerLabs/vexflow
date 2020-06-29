@@ -60,8 +60,20 @@ export class VFStave extends HTMLElement {
   }
 
   connectedCallback() {
-    this.clef = this.getAttribute('clef');
-    this.timeSig = this.getAttribute('timeSig');
+    if (!this.getAttribute('clef')) {
+      const getPrevClefEvent = new CustomEvent('getPrevClef', { bubbles: true });
+      this.dispatchEvent(getPrevClefEvent);
+    } else { 
+      this.clef = this.getAttribute('clef');
+    }
+    
+    if (!this.getAttribute('timeSig')) {
+      const getPrevTimeSigEvent = new CustomEvent('getPrevTimeSig', { bubbles: true });
+      this.dispatchEvent(getPrevTimeSigEvent);
+    } else {
+      this.timeSig = this.getAttribute('timeSig');
+    }
+
     this.keySig = this.getAttribute('keySig');
 
     this.dispatchEvent(new StaveAddedEvent());
