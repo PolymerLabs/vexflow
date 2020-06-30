@@ -1,7 +1,6 @@
 /*
   Run the full VexFlow test suite, grab the generated images, and
   dump them into a local directory as PNG files.
-
   This meant to be used with the visual regression test system in
   `tools/visual_regression.sh`.
 */

@@ -321,6 +321,7 @@ export class VFScore extends HTMLElement {
       }
     }
   }
+
   /** 
    * Sets the factory instance of the component that dispatched the event. 
    */
