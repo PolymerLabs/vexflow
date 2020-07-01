@@ -1,6 +1,6 @@
 import Vex from '../src/index';
 
-import '../src/web-components/vf-stave';
+import '../src/web-components/vf-voice';
 import ElementAddedEvent from '../src/web-components/events/elementAddedEvent';
 
 export class VFTuplet extends HTMLElement {
@@ -8,6 +8,7 @@ export class VFTuplet extends HTMLElement {
     super();
 
     this.beamed = false;
+    this._score = undefined;
   }
 
   connectedCallback() {
@@ -35,11 +36,15 @@ export class VFTuplet extends HTMLElement {
   createTuplet() {
     this.createNotes(this.notesText, this.stemDirection);
 
-    this.tuplet = this._score.tuplet(this.notes, 
-      { notes_occupied: this.notesOccupied, 
+    this.tuplet = this._score.tuplet(this.notes,
+      { 
+        num_notes: (this.hasAttribute('numNotes')) ? this.getAttribute('numNotes') : this.notes.length,
+        notes_occupied: this.notesOccupied,
+        location: this.stemDirection === 'down' ? -1 : 1,
         bracketed: !this.beamed,
-        location: this.stemDirection === 'down' ? -1 : 1
-      });
+        ratioed: this.hasAttribute('ratioed'),
+      }
+    );
 
     if (this.beamed) {
       this.createBeam();

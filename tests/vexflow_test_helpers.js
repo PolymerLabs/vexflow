@@ -294,6 +294,7 @@ VF.Test = (function () {
         var fileName = `${VF.Test.NODE_IMAGEDIR}/${moduleName}.${testName}.png`;
 
         setTimeout(function() {
+          console.log('getting the canvas');
           const canvas = document.querySelector('#'+scoreId).shadowRoot.querySelector('canvas');
 
           var imageData = canvas.toDataURL().split(';base64,').pop();
