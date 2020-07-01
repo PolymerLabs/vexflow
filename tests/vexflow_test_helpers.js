@@ -302,7 +302,6 @@ VF.Test = (function () {
           console.log('Writing file with filename = ' + fileName);
           fs.writeFileSync(fileName, image, { encoding: 'base64' });
         }, 2000);
-        
       });
     },
 
