@@ -2,6 +2,7 @@ VF.Test.run = function() {
   // VF.Test.WebComponents.Start();
   // VF.Test.BeamWebComponents.Start();
   // VF.Test.TupletWebComponents.Start();
+  // VF.Test.RestsWebComponents.Start();
   VF.Test.Accidental.Start();
   VF.Test.StaveNote.Start();
   VF.Test.Voice.Start();
