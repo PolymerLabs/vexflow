@@ -170,6 +170,7 @@
       </vf-system>  
     </vf-score>
 
+    <!-- Weird Tuplets -->
     <vf-score x=10 y=10 width=450 height=140 renderer='canvas'>
       <vf-system>
         <vf-stave clef='treble' timeSig='9/4'>
@@ -177,6 +178,48 @@
             <vf-tuplet stem='up' notesOccupied=3>f3/q[stem="up"], a5[stem="down"]</vf-tuplet>
             <vf-tuplet stem='up' notesOccupied=3>a4/q, f3</vf-tuplet>
             <vf-tuplet stem='up' notesOccupied=3>a4/q[stem="down"], c4[stem="down"]</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+    </vf-score>
+
+    <!-- FORMATTER: MULTIPLE STAVES TEST -->
+    <vf-score renderer='svg' width=600 systemsPerLine=2>
+      <vf-system>
+        <vf-stave clef='treble' timeSig='6/8'>
+          <vf-voice>f4/4, d4/8, g4/4, eb4/8</vf-voice>
+        </vf-stave>
+      </vf-system> 
+
+      <vf-system>
+        <vf-stave>
+          <vf-voice stem='down'>ab4/4, bb4/8, (cb5 eb5)/4[stem="down"], d5/8[stem="down"]</vf-voice>
+        </vf-stave>
+      </vf-system>  
+
+      <vf-system connected>
+        <vf-stave clef='treble' timeSig='6/8'>
+          <vf-voice>
+            <vf-beam>d4/8, d4, d4</vf-beam>
+            <vf-beam>d4/8, e4, eb4</vf-beam>
+          </vf-voice>
+        </vf-stave>
+        <vf-stave clef='bass' timeSig='6/8'>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c4/8, c4, c4</vf-beam>
+            <vf-beam stem='down'>c4/8, c4, c4</vf-beam>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+
+      <vf-system>
+        <vf-stave>
+          <vf-voice>(eb4 ab4)/4., (c4 eb4 ab4)/4, db5/8</vf-voice>
+        </vf-stave>
+        <vf-stave>
+          <vf-voice stem='down'>
+            <vf-beam stem='down'>c4/8, c4, c4</vf-beam>
+            <vf-beam stem='down'>c4/8, c4, c4</vf-beam>
           </vf-voice>
         </vf-stave>
       </vf-system>

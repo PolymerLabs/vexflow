@@ -2,9 +2,9 @@ Vex.Flow.Test.WebComponents = (function() {
   var WebComponents = {
     Start: function() {
       QUnit.module('WebComponents');
-      Vex.Flow.Test.runTests('Basic', Vex.Flow.Test.WebComponents.basic);
-      Vex.Flow.Test.runTests('Two Staves', Vex.Flow.Test.WebComponents.twoStaves);
-      // Vex.Flow.Test.runTests('Formatter: Multiple Staves - Justified', Vex.Flow.Test.WebComponents.formatterMultipleStavesJustified);
+      Vex.Flow.Test.runNodeWebComponentTest('Basic', Vex.Flow.Test.WebComponents.basic);
+      Vex.Flow.Test.runNodeWebComponentTest('Two Staves', Vex.Flow.Test.WebComponents.twoStaves);
+      Vex.Flow.Test.runNodeWebComponentTest('Formatter: Multiple Staves - Justified', Vex.Flow.Test.WebComponents.formatterMultipleStavesJustified);
     },
 
     basic: function(options) {
