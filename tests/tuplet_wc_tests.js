@@ -2,13 +2,13 @@ Vex.Flow.Test.TupletWebComponents = (function() {
   var TupletWebComponents = {
     Start: function() {
       QUnit.module('Tuplet: WebComponents');
-      Vex.Flow.Test.runNodeWebComponentTest('Simple Tuplet', TupletWebComponents.simple);
-      Vex.Flow.Test.runNodeWebComponentTest('Beamed Tuplet', TupletWebComponents.beamed);
-      Vex.Flow.Test.runNodeWebComponentTest('Ratioed Tuplet', TupletWebComponents.ratio);
-      Vex.Flow.Test.runNodeWebComponentTest('Bottom Ratioed Tuplet', TupletWebComponents.bottom_ratio);
-      Vex.Flow.Test.runNodeWebComponentTest('Complex Tuplet', TupletWebComponents.complex);
-      Vex.Flow.Test.runNodeWebComponentTest('Mixed Stem Direction Tuplet', TupletWebComponents.mixedTop);
-      Vex.Flow.Test.runNodeWebComponentTest('Mixed Stem Direction Bottom Tuplet', TupletWebComponents.mixedBottom);
+      Vex.Flow.Test.runTests('Simple Tuplet', TupletWebComponents.simple);
+      Vex.Flow.Test.runTests('Beamed Tuplet', TupletWebComponents.beamed);
+      Vex.Flow.Test.runTests('Ratioed Tuplet', TupletWebComponents.ratio);
+      Vex.Flow.Test.runTests('Bottom Ratioed Tuplet', TupletWebComponents.bottom_ratio);
+      Vex.Flow.Test.runTests('Complex Tuplet', TupletWebComponents.complex);
+      Vex.Flow.Test.runTests('Mixed Stem Direction Tuplet', TupletWebComponents.mixedTop);
+      Vex.Flow.Test.runTests('Mixed Stem Direction Bottom Tuplet', TupletWebComponents.mixedBottom);
     },
 
     simple: function(options) {

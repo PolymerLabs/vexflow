@@ -2,11 +2,11 @@ Vex.Flow.Test.RestsWebComponents = (function() {
   var RestsWebComponents = {
     Start: function() {
       QUnit.module('Rests: WebComponents');
-      Vex.Flow.Test.runNodeWebComponentTest('Auto Align Rests - Beamed Notes Stems Up', RestsWebComponents.beamsUp);
-      Vex.Flow.Test.runNodeWebComponentTest('Auto Align Rests - Beamed Notes Stems Down', RestsWebComponents.beamsDown);
-      Vex.Flow.Test.runNodeWebComponentTest('Auto Align Rests - Tuplets Stems Up', RestsWebComponents.tupletsUp);
-      Vex.Flow.Test.runNodeWebComponentTest('Auto Align Rests - Single Voice (Default)', RestsWebComponents.staveRests);
-      Vex.Flow.Test.runNodeWebComponentTest('Auto Align Rests - Multi Voice (Default)', RestsWebComponents.multi);
+      Vex.Flow.Test.runTests('Auto Align Rests - Beamed Notes Stems Up', RestsWebComponents.beamsUp);
+      Vex.Flow.Test.runTests('Auto Align Rests - Beamed Notes Stems Down', RestsWebComponents.beamsDown);
+      Vex.Flow.Test.runTests('Auto Align Rests - Tuplets Stems Up', RestsWebComponents.tupletsUp);
+      Vex.Flow.Test.runTests('Auto Align Rests - Single Voice (Default)', RestsWebComponents.staveRests);
+      Vex.Flow.Test.runTests('Auto Align Rests - Multi Voice (Default)', RestsWebComponents.multi);
       
     },
 

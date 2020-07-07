@@ -2,17 +2,17 @@ Vex.Flow.Test.BeamWebComponents = (function() {
   var BeamWebComponents = {
     Start: function() {
       QUnit.module('Beam: WebComponents');
-      Vex.Flow.Test.runNodeWebComponentTest('Simple Beam', BeamWebComponents.simple);
-      Vex.Flow.Test.runNodeWebComponentTest('Multi Beam', BeamWebComponents.multi);
-      Vex.Flow.Test.runNodeWebComponentTest('Sixteenth Beam', BeamWebComponents.sixteenth);
-      Vex.Flow.Test.runNodeWebComponentTest('Slopey Beam', BeamWebComponents.slopey);
-      Vex.Flow.Test.runNodeWebComponentTest('Mixed Beam 2', BeamWebComponents.mixed2);
-      Vex.Flow.Test.runNodeWebComponentTest('Dotted Beam', BeamWebComponents.dotted);
-      Vex.Flow.Test.runNodeWebComponentTest('Partial Beam', BeamWebComponents.partial);
-      Vex.Flow.Test.runNodeWebComponentTest('Close Trade-offs Beam', BeamWebComponents.tradeoffs);
-      Vex.Flow.Test.runNodeWebComponentTest('Insane Beam', BeamWebComponents.insane);
-      Vex.Flow.Test.runNodeWebComponentTest('Lengthy Beam', BeamWebComponents.lengthy);
-      Vex.Flow.Test.runNodeWebComponentTest('Outlier Beam', BeamWebComponents.outlier);
+      Vex.Flow.Test.runTests('Simple Beam', BeamWebComponents.simple);
+      Vex.Flow.Test.runTests('Multi Beam', BeamWebComponents.multi);
+      Vex.Flow.Test.runTests('Sixteenth Beam', BeamWebComponents.sixteenth);
+      Vex.Flow.Test.runTests('Slopey Beam', BeamWebComponents.slopey);
+      Vex.Flow.Test.runTests('Mixed Beam 2', BeamWebComponents.mixed2);
+      Vex.Flow.Test.runTests('Dotted Beam', BeamWebComponents.dotted);
+      Vex.Flow.Test.runTests('Partial Beam', BeamWebComponents.partial);
+      Vex.Flow.Test.runTests('Close Trade-offs Beam', BeamWebComponents.tradeoffs);
+      Vex.Flow.Test.runTests('Insane Beam', BeamWebComponents.insane);
+      Vex.Flow.Test.runTests('Lengthy Beam', BeamWebComponents.lengthy);
+      Vex.Flow.Test.runTests('Outlier Beam', BeamWebComponents.outlier);
     },
 
     simple: function(options) {

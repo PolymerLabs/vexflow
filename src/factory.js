@@ -600,11 +600,16 @@ export class Factory {
   }
 
   draw() {
+    console.log('systems ' + this.systems.length);
+    console.log('staves ' + this.staves.length);
+    console.log('voices ' + this.voices.length);
     this.systems.forEach(i => i.setContext(this.context).format());
     this.staves.forEach(i => i.setContext(this.context).draw());
     this.voices.forEach(i => i.setContext(this.context).draw());
     this.renderQ.forEach(i => {
-      if (!i.isRendered()) i.setContext(this.context).draw();
+      if (!i.isRendered()) {
+        i.setContext(this.context).draw();
+      }
     });
     this.systems.forEach(i => i.setContext(this.context).draw());
     this.reset();

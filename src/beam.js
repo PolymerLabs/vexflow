@@ -286,6 +286,7 @@ export class Beam extends Element {
     }
 
     function formatStems() {
+      // console.log('formatting stems')
       noteGroups.forEach(group => {
         let stemDirection;
         if (config.maintain_stem_directions) {
