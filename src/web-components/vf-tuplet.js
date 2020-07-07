@@ -1,7 +1,7 @@
-import Vex from '../src/index';
+import Vex from '../index';
 
-import '../src/web-components/vf-voice';
-import ElementAddedEvent from '../src/web-components/events/elementAddedEvent';
+import './vf-voice';
+import ElementAddedEvent from './events/elementAddedEvent';
 
 export class VFTuplet extends HTMLElement {
   constructor() {

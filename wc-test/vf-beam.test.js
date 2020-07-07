@@ -1,17 +1,19 @@
 import { expect, fixture, html } from '@open-wc/testing';
 
-import '../wc-src/index';
+import '../src/web-components/index';
 
 describe('vf-curve', () => {
   it('simple beam', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' timeSig='4/4'>
-          <vf-voice stem='down'>
-            <vf-beam stem='down'>c4/8, f5, d5, g5</vf-beam>
-            <vf-beam stem='down'>d6/8, f5, d5, g5</vf-beam>
-          </vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' timeSig='4/4'>
+            <vf-voice stem='down'>
+              <vf-beam stem='down'>c4/8, f5, d5, g5</vf-beam>
+              <vf-beam stem='down'>d6/8, f5, d5, g5</vf-beam>
+            </vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 

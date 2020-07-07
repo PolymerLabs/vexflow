@@ -1,3 +1,4 @@
+
 // ## Description
 // 
 // This file implements `vf-score`, the web component that acts as the 
@@ -12,6 +13,7 @@ import StaveAddedEvent from './events/staveAddedEvent';
 import SystemReadyEvent from './events/systemReadyEvent';
 
 export class VFScore extends HTMLElement {
+
   /**
    * The Factory instance to be used by the overall component that this vf-score
    * wraps.
@@ -108,17 +110,25 @@ export class VFScore extends HTMLElement {
 
     // The 'vf-stave-added' event is dispatched only by the vf-stave child. 
     this.addEventListener(StaveAddedEvent.eventName, this.setRegistry);
- 
+
+    this.addEventListener('systemCreated', this.systemCreated);
     this.addEventListener('getPrevTimeSig', this.getPrevTimeSig);
     this.addEventListener('getPrevClefForStave', this.getPrevClef);
+
+    this.addEventListener('vfCurveReady', this.setRegistry);
   }
 
   connectedCallback() {
     this._startX = parseInt(this.getAttribute('x')) || this._startX;
     this._startY = parseInt(this.getAttribute('y')) || this._startY;
     this._rendererType = this.getAttribute('renderer') || this._rendererType;
+
+    this.width = parseInt(this.getAttribute('width')) || this.width;
+    this.height = parseInt(this.getAttribute('height'));
+
     this._systemsPerLine = parseInt(this.getAttribute('systemsPerLine')) || this._systemsPerLine;
-    this.staveWidth = Math.floor((this._width - this._startX-1) / this._systemsPerLine);
+    this.staveWidth = Math.floor((this.width - this._startX - 1) / this._systemsPerLine);
+
 
     // Because connectedCallback could be called multiple times, safeguard 
     // against setting up the renderer, factory, etc. more than once. 
@@ -129,37 +139,7 @@ export class VFScore extends HTMLElement {
 
     // vf-score listens to the slotchange event so that it can detect its system 
     // and set it up accordingly
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystems);
-  }
-
-  disconnectedCallback() {
-    // TODO (ywsang): Clean up any resources that may need to be cleaned up. 
-    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerSystems);
-  }
-
-  static get observedAttributes() { return ['x', 'y', 'width', 'height', 'renderer'] }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    switch(name) {
-      case 'x':
-      case 'y':
-        // TODO (ywsang): Implement code to update the position of the vf-system
-        // children. 
-        break;
-      case 'width':
-        this._width = newValue;
-        // TODO (ywsang): Implement code to resize the renderer. Need to make 
-        // sure the renderer is already created!
-        break;
-      case 'height':
-        this._height = newValue;
-        // TODO (ywsang): Implement code to resize the renderer. Need to make 
-        // sure the renderer is already created!
-        break;
-      case 'renderer':
-        this._rendererType = newValue;
-        break;
-    }
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystem);
   }
 
   /**
@@ -179,13 +159,11 @@ export class VFScore extends HTMLElement {
       this._renderer = new Vex.Flow.Renderer(element, Vex.Flow.Renderer.Backends.SVG);
     }
 
+    // this._renderer.resize(this._width, this._height);
     this._context = this._renderer.getContext();
     this.registry = new Vex.Flow.Registry();
   }
 
-  /**
-   * @private
-   */
   _setupFactory() {
     // Factory is constructed with a null elementId because the underlying code 
     // uses document.querySelector(elementId) to find the element to attach the 
@@ -204,84 +182,79 @@ export class VFScore extends HTMLElement {
     return this.registry.getElementById(id);
   }
 
-  /** 
-   * "Registers" the vf-system child. 
-   * This PR only supports/assumes one vf-system per vf-score. 
-   */
+  /** "Registers" the vf-system children and lays them out */
   registerSystems = () => {
     const systems = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-SYSTEM');
     this.totalNumSystems = systems.length;
 
     const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
+    const height = numLines*250 + 20;
+    this._renderer.resize(this.width, (this.height) ? this.height : height);
+    
+    var systemsAdded = 0;
+    var systemsAddedOnLine = 0;
+    var lineNumber = 1;
+    var adjustedLastLine = false;
 
     this.x = this._startX;
     this.y = this._startY;
 
-    var i;
-    var lineNumber = 1;
-    var adjustedLastLine = false;
-    for (i = 1; i <= this.totalNumSystems; i++) {
-      const system = systems[i-1];
-
+    systems.forEach(system => {
       if (lineNumber === numLines && !adjustedLastLine) {
-        const systemsLeft = this.totalNumSystems - (i - 1);
-        this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
+        const systemsLeft = this.totalNumSystems - systemsAdded;
+        this.staveWidth = Math.floor((this.width - this._startX - 1)/systemsLeft);
         adjustedLastLine = true;
       }
 
-      // TODO (ywsang): Figure out how to account for any added connectors that 
-      // get drawn in front of the x position (e.g. brace, bracket)
-      system.setupSystem(this.x, this.y, this.staveWidth);  
+      // console.log('setting up system with staveWidth = ' + this.staveWidth + ', x = ' + this.x + ', y = ' + this.y);
+      systemsAdded++;
+      system.setupSystem(this.x, this.y, this.staveWidth, systemsAdded);      
 
       this.x += this.staveWidth;
-      if (i % this._systemsPerLine === 0) { // break to new line 
-        this.x = this._startX; // reset x position
-        this.y += this.getSystemLineHeight(system.childElementCount); // update y position
+      systemsAddedOnLine++;
+
+      if (systemsAddedOnLine == this._systemsPerLine) {
+        this.x = this._startX;
+        this.y += 230;
+        systemsAddedOnLine = 0;  
         lineNumber++;
       }
-    }
+    });
 
-    // If the last line was not filled, account for their height 
-    if (this.totalNumSystems % this._systemsPerLine !== 0) {
-      const lastSystem = systems[this.totalNumSystems - 1];
-      this.y += this.getSystemLineHeight(lastSystem.childElementCount);
-    }
-
-    this._renderer.resize(this._width, (this._height) ? this._height : this.y);
+    this.systemAdded('registerSystems');
   }
 
-  getSystemLineHeight(stavesInSystem) {
-    return 130 * stavesInSystem;
-  }
-
-  /**
-   * TODO
-   */
   systemCreated = () => {
-    this._systemsAdded++;
-    this.systemAdded();
+    this.systemsAdded++;
+    this.systemAdded('systemCreated');
   }
 
-  systemAdded() {
-    if (this.totalNumSystems === this._systemsAdded) {
+  systemAdded(callerName) {
+    console.log('systemAdded called from ' + callerName);
+    if (this.totalNumSystems === this.systemsAdded) {
+      console.log('systemAdded called from ' + callerName);
       this.addSystemConnectors();
       this.addCurves();
+      console.log('drawing');
       this.vf.draw();
+      console.log('done!');
     }
   }
 
   addSystemConnectors() {
     const systems = this.vf.systems;
     const numSystems = systems.length;
+    console.log(numSystems);
 
     var i;
     for (i = 0; i < numSystems; i++) {
       systems[i].addConnector('singleRight');
-      // if (i % this._systemsPerLine === 0) {
+      if (i % this._systemsPerLine === 0) {
         systems[i].addConnector('singleLeft');
-      // }
+      }
     }
   }
+
 
   addCurves() {
     const curves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-CURVE');
@@ -291,7 +264,7 @@ export class VFScore extends HTMLElement {
   }
 
   /** Gets the time signature of the previous system, dispatched from a vf-stave in a vf-system */
-  getPrevTimeSig = () => {
+  getPrevTimeSig = (event) => {
     // event.target is a vf-stave
     const system = event.target.parentElement;
     const index = this.getIndexPosition(system);
@@ -300,7 +273,7 @@ export class VFScore extends HTMLElement {
   }
 
   /** Gets the clef of the stave at index = event.detail.staveIndex of the previous system */
-  getPrevClef = () => {
+  getPrevClef = (event) => {
     // event.target is a vf-system
     const staveIndex = event.detail.staveIndex;
     const systemIndex = this.getIndexPosition(event.target);
@@ -322,16 +295,12 @@ export class VFScore extends HTMLElement {
     }
   }
 
-  /** 
-   * Sets the factory instance of the component that dispatched the event. 
-   */
+  /** Sets the factory instance of the component that dispatched the event */
   setFactory = (event) => {
     event.target.vf = this.vf;
   }
 
-  /** 
-   * Sets the registry instance of the component that dispatched the event.
-   */
+  /** Sets the registry instance of the component that dispatched the event */
   setRegistry = (event) => {
     event.target.registry = this.registry;
   }

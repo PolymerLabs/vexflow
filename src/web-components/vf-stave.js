@@ -1,3 +1,4 @@
+
 // ## Description
 // 
 // This file implements `vf-stave`, the web component that resembles 
@@ -67,6 +68,7 @@ export class VFStave extends HTMLElement {
       this.clef = this.getAttribute('clef');
     }
     
+
     if (!this.getAttribute('timeSig')) {
       const getPrevTimeSigEvent = new CustomEvent('getPrevTimeSig', { bubbles: true });
       this.dispatchEvent(getPrevTimeSigEvent);
@@ -82,6 +84,7 @@ export class VFStave extends HTMLElement {
     // vf-stave listens to the slotchange event so that it can detect its voices 
     // and establish how many voices it expects to receive events from. 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerVoices);
+    // console.log('vf-stave connectedCallback')
   }
 
   disconnectedCallback() {
@@ -134,7 +137,7 @@ export class VFStave extends HTMLElement {
     });
   }
   
-  /** 
+   /** 
    * The slotchange event listener. This event listener sets the number of 
    * vf-voices that this vf-stave expects to receive dispatched event from.
    */
@@ -150,7 +153,7 @@ export class VFStave extends HTMLElement {
     }
   }
 
-  /** 
+    /** 
    * This is the event listener for when a vf-voice has finished creating its 
    * notes. Creates a Vex.Flow.Voice from the vf-voice's notes and adds the 
    * resulting voice and the vf-voice's beams to the corresponding arrays 

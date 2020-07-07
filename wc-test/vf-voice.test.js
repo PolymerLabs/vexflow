@@ -6,9 +6,11 @@ describe('vf-voice', () => {
   it('defaults to stem up if no attribute', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' keySig='C'>
-          <vf-voice>C4/q[id='1'], D4[id='2'], E4[id='3'], F4[id='4']</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' keySig='C'>
+            <vf-voice>C4/q[id='1'], D4[id='2'], E4[id='3'], F4[id='4']</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -21,9 +23,11 @@ describe('vf-voice', () => {
   it('stem attribute set renders correctly', async() =>  {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' keySig='C'>
-          <vf-voice stem='down'>C5/q[id='1'], D5[id='2'], E5[id='3'], F5[id='4']</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' keySig='C'>
+            <vf-voice stem='down'>C5/q[id='1'], D5[id='2'], E5[id='3'], F5[id='4']</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `); 
 
@@ -37,9 +41,11 @@ describe('vf-voice', () => {
   it('stem attribute on note overrides stem attribute on voice', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' keySig='C'>
-          <vf-voice>F4/q[id='1'], A4[id='2'], C5[id='3', stem='down'], E5[id='4', stem='down']</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' keySig='C'>
+            <vf-voice>F4/q[id='1'], A4[id='2'], C5[id='3', stem='down'], E5[id='4', stem='down']</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -53,9 +59,11 @@ describe('vf-voice', () => {
   it('simple accidentals (flats) render correctly', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' keySig='C'>
-          <vf-voice>C4/q[id='1'], Db4[id='2'], Eb4[id='3'], F4[id='4']</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' keySig='C'>
+            <vf-voice>C4/q[id='1'], Db4[id='2'], Eb4[id='3'], F4[id='4']</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -69,9 +77,11 @@ describe('vf-voice', () => {
   it('simple accidentals (sharps) render correctly', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' keySig='C'>
-          <vf-voice>G4/q, A4, B4, C#5</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' keySig='C'>
+            <vf-voice>G4/q, A4, B4, C#5</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -85,9 +95,11 @@ describe('vf-voice', () => {
   it('autobeamed notes', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' timeSig='4/4'>
-          <vf-voice stem='down' autoBeam>c4/8, f5, d5, g5, d6/8, f5, d5, g5</vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' timeSig='4/4'>
+            <vf-voice stem='down' autoBeam>c4/8, f5, d5, g5, d6/8, f5, d5, g5</vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 

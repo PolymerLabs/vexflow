@@ -1,13 +1,8 @@
+ 
 // ## Description
 // 
 // This file implements `vf-voice`, the web component that resembles 
 // the `Voice` element. 
-// 
-// FOR THIS PR: One `vf-voice` is comprised from a text string, written in 
-// Grammer of the EasyScore API parser.  
-// `vf-voice` is responsible for generating the notes from the text string. 
-// Once the notes are created, `vf-voice` dispatches an event to its parent
-// `vf-stave` to signal that it's ready to be created and added to the stave. 
 
 import Vex from '../index';
 import './vf-stave';
@@ -67,13 +62,14 @@ export class VFVoice extends HTMLElement {
   constructor() {
     super();
 
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(document.importNode(template.content, true));
+
+    // Defaults
     this.numBeams = 0;
     this.numTuplets = 0;
     this.elementToNotesMap = new Map(); // map of textContent nodes/vf-tuplets/vf-beams to their notes
     this.elementOrder = new Set();
-
-    this.attachShadow({ mode: 'open' });
-    this.shadowRoot.appendChild(document.importNode(template.content, true));
   }
 
   connectedCallback() {
@@ -92,7 +88,7 @@ export class VFVoice extends HTMLElement {
     // TODO (ywsang): Implement code to update based on changes to attributes
   }
 
-   /**
+  /**
    * Setter to detect when the Factory instance is set. Once the Factory and
    * EasyScore instances are set, vf-voice can start creating components. 
    * 
@@ -105,7 +101,7 @@ export class VFVoice extends HTMLElement {
     this.registerNodes();
   }
 
-   /**
+  /**
    * Setter to detect when the EasyScore instance is set. Once the Factory and
    * EasyScore instances are set, vf-voice can start creating components. 
    * 
@@ -126,7 +122,7 @@ export class VFVoice extends HTMLElement {
           case '#text':
             const notesText = node.textContent.trim();
             if (notesText) {
-              const notes = this.createNotes(notesText, this.stem);
+              const notes = this._createNotesFromText(notesText);
               this.elementOrder.add(node);
               this.elementToNotesMap.set(node, notes);
               if (this.autoBeam) {
@@ -150,6 +146,39 @@ export class VFVoice extends HTMLElement {
     }
   }
 
+  tupletCreated = (event) => {
+    const tuplet = event.target;
+    this.elementToNotesMap.set(tuplet, tuplet.tuplet);
+    if (tuplet.beam) {
+      this.beams.push(...tuplet.beam);
+    }
+    this.numTuplets--;
+    this.elementAdded(tuplet);
+  }
+
+  beamCreated = (event) => {
+    const beam = event.target;
+    this.elementToNotesMap.set(beam, beam.notes);
+    this.beams.push(...beam.beam);
+    this.numBeams--;
+    this.elementAdded(beam);
+  }
+
+  /** For debugging what's in the map */
+  iterateOverMap() {
+    const it = this.elementToNotesMap.values();
+    const keysIt = this.elementToNotesMap.keys();
+    let notes = it.next();
+    let key = keysIt.next();
+    while (!notes.done) {
+      console.log(key);
+      console.log('value: ' + notes);
+      console.log(notes);
+      notes = it.next();
+      key = keysIt.next();
+    }
+  }
+
   elementAdded() {
     // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
     if (this.numTuplets === 0 && this.numBeams === 0) {
@@ -160,18 +189,6 @@ export class VFVoice extends HTMLElement {
       
       // Dispatches event to vf-stave to create and add the voice to the stave
       this.dispatchEvent(new VoiceReadyEvent(this.notes, this.beams));
-    }
-  }
-
-  /**
-   * Creates notes (and optionally, beams) from the text content of this 
-   * vf-voice element.
-   */
-  createNotes = (line, stemDirection) => {
-    if (this._vf && this._score) {
-      this._score.set({ stem: stemDirection });
-      const staveNotes = this._score.notes(line);
-      return staveNotes;
     }
   }
 
@@ -207,24 +224,6 @@ export class VFVoice extends HTMLElement {
       this._vf.renderQ.push(beam);
     })
     return beams;
-  }
-
-  tupletCreated = (event) => {
-    const tuplet = event.target;
-    this.elementToNotesMap.set(tuplet, tuplet.tuplet);
-    if (tuplet.beam) {
-      this.beams.push(...tuplet.beam);
-    }
-    this.numTuplets--;
-    this.elementAdded(tuplet);
-  }
-
-  beamCreated = (event) => {
-    const beam = event.target;
-    this.elementToNotesMap.set(beam, beam.notes);
-    this.beams.push(...beam.beam);
-    this.numBeams--;
-    this.elementAdded(beam);
   }
 }
 

@@ -10,14 +10,14 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
     Start: function() {
       var runTests = VF.Test.runTests;
       QUnit.module('Auto-Beaming: WebComponents');
-      // runTests('Simple Auto Beaming', AutoBeamFormattingWebComponents.simpleAuto);
+      runTests('Simple Auto Beaming', AutoBeamFormattingWebComponents.simpleAuto);
       // runTests('Auto Beaming With Overflow Group', AutoBeamFormattingWebComponents.simpleAutoWithOverflowGroup); -- stem direction is off
-      // runTests('Even Group Stem Directions', AutoBeamFormattingWebComponents.evenGroupStemDirections);
-      // runTests('More Simple Auto Beaming 0', AutoBeamFormattingWebComponents.moreSimple0);
-      // runTests('More Simple Auto Beaming 1', AutoBeamFormattingWebComponents.moreSimple1);
-      runTests('Odd Time - Guessing Default Beam Groups', AutoBeamFormattingWebComponents.autoOddBeamGroups); // groups are off
-      // runTests('Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.simpleTuplets);
-      // runTests('More Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.moreSimpleTuplets);
+      runTests('Even Group Stem Directions', AutoBeamFormattingWebComponents.evenGroupStemDirections);
+      runTests('More Simple Auto Beaming 0', AutoBeamFormattingWebComponents.moreSimple0);
+      runTests('More Simple Auto Beaming 1', AutoBeamFormattingWebComponents.moreSimple1);
+      // runTests('Odd Time - Guessing Default Beam Groups', AutoBeamFormattingWebComponents.autoOddBeamGroups); // groups are off
+      runTests('Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.simpleTuplets);
+      runTests('More Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.moreSimpleTuplets);
       // runTests('More Automatic Beaming', AutoBeamFormattingWebComponents.moreBeaming); -- groups are off
     },
 
@@ -75,7 +75,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       `;
       document.body.appendChild(document.importNode(template.content, true));
 
-      // need to figure out this
+      // how to test this? 
       // var UP = VF.Stem.UP;
       // var DOWN = VF.Stem.DOWN;
       // equal(beams[0].stem_direction, UP);
@@ -120,30 +120,30 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
     },
 
     // beam groups are off
-    autoOddBeamGroups: function(options) {
-      const template = document.createElement('template');
-      template.innerHTML = `
-        <vf-score id=${options.scoreId} width=450 height=600 renderer='canvas'>
-          <vf-system>
-            <vf-stave clef='treble' timeSig='5/4'>
-              <vf-voice autoBeam>c5/8, g5, c5, b4, b4, c4, d4, a5, c4, g4</vf-voice>
-            </vf-stave>
-          </vf-system>  
-          <vf-system>
-            <vf-stave clef='treble' timeSig='5/8'>
-              <vf-voice autoBeam>c5/8, g5, c5, b4, b4</vf-voice>
-            </vf-stave>
-          </vf-system>  
-          <vf-system>
-            <vf-stave clef='treble' timeSig='13/16'>
-              <vf-voice autoBeam>c5/16, g5, c5, b4, b4, c5, g5, c5, b4, b4, c5, b4, b4</vf-voice>
-            </vf-stave>
-          </vf-system>  
-        </vf-score>
-      `;
-      document.body.appendChild(document.importNode(template.content, true));
-      ok(true, 'Web Components: Auto Beaming Applicator Test');
-    },
+    // autoOddBeamGroups: function(options) {
+    //   const template = document.createElement('template');
+    //   template.innerHTML = `
+    //     <vf-score id=${options.scoreId} width=450 height=600 renderer='canvas'>
+    //       <vf-system>
+    //         <vf-stave clef='treble' timeSig='5/4'>
+    //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4, c4, d4, a5, c4, g4</vf-voice>
+    //         </vf-stave>
+    //       </vf-system>  
+    //       <vf-system>
+    //         <vf-stave clef='treble' timeSig='5/8'>
+    //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4</vf-voice>
+    //         </vf-stave>
+    //       </vf-system>  
+    //       <vf-system>
+    //         <vf-stave clef='treble' timeSig='13/16'>
+    //           <vf-voice autoBeam>c5/16, g5, c5, b4, b4, c5, g5, c5, b4, b4, c5, b4, b4</vf-voice>
+    //         </vf-stave>
+    //       </vf-system>  
+    //     </vf-score>
+    //   `;
+    //   document.body.appendChild(document.importNode(template.content, true));
+    //   ok(true, 'Web Components: Auto Beaming Applicator Test');
+    // },
 
     simpleTuplets: function(options) {
       const template = document.createElement('template');

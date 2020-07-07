@@ -1,17 +1,19 @@
 import { expect, fixture, html } from '@open-wc/testing';
 
-import '../wc-src/index';
+import '../src/web-components/index';
 
 describe('vf-tuplet', () => {
   it('simple tuplet, no beams', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' timeSig='3/4'>
-          <vf-voice>
-            <vf-tuplet stem='up'>G4/q, A4, B4</vf-tuplet>
-            <vf-tuplet stem='up'>B4/8, A4, G4</vf-tuplet>
-          </vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' timeSig='3/4'>
+            <vf-voice>
+              <vf-tuplet stem='up'>G4/q, A4, B4</vf-tuplet>
+              <vf-tuplet stem='up'>B4/8, A4, G4</vf-tuplet>
+            </vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -25,12 +27,14 @@ describe('vf-tuplet', () => {
   it('beamed tuplet', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' timeSig='3/8'>
-          <vf-voice stem='up'>
-            <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
-            <vf-tuplet beamed stem='down'>A4/8, F4, A4[id='end'], F4, A4, F4</vf-tuplet>
-          </vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' timeSig='3/8'>
+            <vf-voice stem='up'>
+              <vf-tuplet beamed stem='down'>B4/16, A4[id='start'], G4</vf-tuplet>
+              <vf-tuplet beamed stem='down'>A4/8, F4, A4[id='end'], F4, A4, F4</vf-tuplet>
+            </vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 
@@ -44,12 +48,14 @@ describe('vf-tuplet', () => {
   it('notes occupied set', async() => {
     const el = await fixture(html`
       <vf-score>
-        <vf-stave clef='treble' timeSig='4/4'>
-          <vf-voice stem='up'>
-            <vf-tuplet stem='up'>F4/q, A4, B4</vf-tuplet>
-            <vf-tuplet beamed stem='up' notesOccupied='4'>G4/8, E4, G4</vf-tuplet>
-          </vf-voice>
-        </vf-stave>
+        <vf-system>
+          <vf-stave clef='treble' timeSig='4/4'>
+            <vf-voice stem='up'>
+              <vf-tuplet stem='up'>F4/q, A4, B4</vf-tuplet>
+              <vf-tuplet beamed stem='up' notesOccupied='4'>G4/8, E4, G4</vf-tuplet>
+            </vf-voice>
+          </vf-stave>
+        </vf-system>
       </vf-score>
     `);
 

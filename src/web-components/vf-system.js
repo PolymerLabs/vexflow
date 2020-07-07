@@ -33,6 +33,8 @@ export class VFSystem extends HTMLElement {
   constructor() {
     super();
 
+    this.staveOrder = new Set();
+
     this.attachShadow({ mode:'open' });
     this.shadowRoot.innerHTML = `<slot></slot>`;
 
@@ -69,16 +71,17 @@ export class VFSystem extends HTMLElement {
    * @param {int} y - The y position for the system. 
    * @param {int} width - The width for the system. 
    */
-  setupSystem(x, y, width) {
+  // TODO: remove num param 
+  setupSystem(x, y, width, num) {
     this.x = x;
-    this.y = y;
-    this.width = width;
+    this.staveWidth = width;
     this.system = this._vf.System({ 
       x: x,
       y: y, 
       width: width,
       factory: this._vf 
     });
+    console.log('system ' + num + ' setup');
 
     // Call createSystem at the end of the system setup to catch the case in 
     // which all of the vf-stave children dispatch events before setUpSystem 
@@ -99,7 +102,7 @@ export class VFSystem extends HTMLElement {
    */
   _registerStaves = () => {
     const staves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-STAVE');
-    this._numStaves = staves.length;
+    this._numStaves += staves.length;
     this.staveOrder = staves;
     this._createSystem();
   }
@@ -117,6 +120,7 @@ export class VFSystem extends HTMLElement {
     // Call createSystem to check whether this vf-system is ready to add its staves. 
     this._createSystem();
   }
+
 
   /**
    * Checks whether the vf-system has set up its System instance and all the 
