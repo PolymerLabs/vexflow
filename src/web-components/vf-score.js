@@ -116,6 +116,8 @@ export class VFScore extends HTMLElement {
     this.addEventListener('getPrevClefForStave', this.getPrevClef);
 
     this.addEventListener('vfCurveReady', this.setRegistry);
+
+    console.log('score with id = ' + this.getAttribute('id'));
   }
 
   connectedCallback() {
@@ -216,40 +218,75 @@ export class VFScore extends HTMLElement {
     this.totalNumSystems = systems.length;
 
     const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
-    var systemsAdded = 0;
-    var systemsAddedOnLine = 0;
-    var lineNumber = 1;
-    var adjustedLastLine = false;
-
+    this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
+    
     this.x = this._startX;
     this.y = this._startY;
 
     // TODO (ywsang): Figure out how to account for any added connectors that 
     // get drawn in front of the x position (e.g. brace, bracket)
-    this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
+    // this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
+    // const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
+    // var systemsAdded = 0;
+    // var systemsAddedOnLine = 0;
+    // var lineNumber = 1;
+    // var adjustedLastLine = false;
 
-    systems.forEach(system => {
+    // systems.forEach(system => {
+    //   if (lineNumber === numLines && !adjustedLastLine) {
+    //   const systemsLeft = this.totalNumSystems - systemsAdded;
+    //   this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
+    //   adjustedLastLine = true;
+    // }
+    
+    // systemsAdded++;
+    // system.setupSystem(this.x, this.y, this.staveWidth, systemsAdded);      
+
+    // this.x += this.staveWidth;
+    // systemsAddedOnLine++;
+
+    // if (systemsAddedOnLine === this._systemsPerLine) { // break to new line 
+    //   this.x = this._startX; // reset x position
+    //   this.y += this.getSystemLineHeight(system.childElementCount);
+    //   systemsAddedOnLine = 0;   
+    //     lineNumber++;
+    //   }
+    // });
+
+    // if (this.totalNumSystems % this.systemsPerLine !== 0) {
+    //   const lastSystem = systems[systemsAdded - 1];
+    //   this.y += this.getSystemLineHeight(lastSystem.childElementCount);
+    // }
+    // this.renderer.resize(this.width, (this.height) ? this.height : this.y);
+
+    var i;
+    var lineNumber = 1;
+    var adjustedLastLine = false;
+    for (i = 1; i <= this.totalNumSystems; i++) {
+      const system = systems[i-1];
+
       if (lineNumber === numLines && !adjustedLastLine) {
-        const systemsLeft = this.totalNumSystems - systemsAdded;
+        const systemsLeft = this.totalNumSystems - (i - 1);
         this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
         adjustedLastLine = true;
       }
 
-      systemsAdded++;
-      system.setupSystem(this.x, this.y, this.staveWidth, systemsAdded);      
-
+      system.setupSystem(this.x, this.y, this.staveWidth, i % this._systemsPerLine === 1);    
+      
       this.x += this.staveWidth;
-      systemsAddedOnLine++;
-
-      if (systemsAddedOnLine === this._systemsPerLine) { // break to new line 
+      if (i % this._systemsPerLine === 0) { // break to new line 
         this.x = this._startX; // reset x position
-        this.y += this.getSystemLineHeight(system.childElementCount);
-        systemsAddedOnLine = 0;  
+        this.y += this.getSystemLineHeight(system.childElementCount); // update y position
         lineNumber++;
       }
-    });
+    }
 
-    if (this.totalNumSystems % this._systemsPerLine !== 0) this.y += this.getSystemLineHeight(systems[systemsAdded-1].childElementCount);
+    // If the last line was not filled, account for its height 
+    if (this.totalNumSystems % this._systemsPerLine !== 0) {
+      const lastSystem = systems[this.totalNumSystems - 1];
+      this.y += this.getSystemLineHeight(lastSystem.childElementCount);
+    }
+
     this._renderer.resize(this._width, (this.height) ? this.height : this.y);
   }
 
@@ -277,9 +314,9 @@ export class VFScore extends HTMLElement {
     var i;
     for (i = 0; i < numSystems; i++) {
       systems[i].addConnector('singleRight');
-      if (i % this._systemsPerLine === 0) {
+      // if (i % this.systemsPerLine === 0) {
         systems[i].addConnector('singleLeft');
-      }
+      // }
     }
   }
 

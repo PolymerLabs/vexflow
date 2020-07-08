@@ -71,14 +71,13 @@ export class VFSystem extends HTMLElement {
    * @param {int} y - The y position for the system. 
    * @param {int} width - The width for the system. 
    */
-  // TODO: remove num param 
-  setupSystem(x, y, width, num) {
-    this.x = x;
+  setupSystem(x, y, width, isFirst) {
     this.y = y;
 
-    if (this.hasAttribute('connected')) {
-      this.x = x + 15;
-      this.staveWidth = width - 15;
+    if (isFirst) {
+      const offset = this.getConnectorOffset(this.getAttribute('connector'));
+      this.x = x + offset;
+      this.staveWidth = width - offset;
     } else {
       this.x = x;
       this.staveWidth = width;
@@ -95,6 +94,12 @@ export class VFSystem extends HTMLElement {
     // which all of the vf-stave children dispatch events before setUpSystem 
     // completes. 
     this._createSystem();
+  }
+
+  getConnectorOffset(type) {
+    if (type === 'bracket') return 5;
+    else if (type == 'brace') return 15;
+    else return 0;
   }
 
   /**
@@ -163,9 +168,9 @@ export class VFSystem extends HTMLElement {
         this.system.addStave({ stave: stave, voices: voices });
       })
 
-      // Add connectors (if specified) once all staves are added
-      if (this.hasAttribute('connected')) {
-        this.system.addConnector('brace');
+      // Can't add connectors until the staves are added
+      if(this.hasAttribute('connector')) {
+        this.system.addConnector(this.getAttribute('connector'));
       }
 
       // Tells parent (vf-score) that this system has finished adding its staves

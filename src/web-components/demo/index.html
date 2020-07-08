@@ -24,7 +24,7 @@
 
     <!-- Two Systems, One Line -->
     <vf-score systemsPerLine=2 width=800>
-      <vf-system connected>
+      <vf-system connector='brace'>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
@@ -55,7 +55,7 @@
     
     <!-- Wrapping Systems -->
     <vf-score systemsPerLine=2 width=700>
-      <vf-system connected>
+      <vf-system connector='bracket'>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']
@@ -75,7 +75,7 @@
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']
           </vf-voice>
         </vf-stave>
-        <vf-stave clef='bass'>
+        <vf-stave>
           <vf-voice stem='down'>
             <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
             <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
@@ -89,7 +89,7 @@
             C#5/q[id='here'], B4, A4/q., E4/8[id='there']
           </vf-voice>
         </vf-stave>
-        <vf-stave clef='bass'>
+        <vf-stave>
           <vf-voice stem='down'>
             <vf-beam stem='down'>c3/8, f3, d3, g3</vf-beam>
             <vf-beam stem='down'>d4/8, f3, d3, g3</vf-beam>
@@ -100,7 +100,7 @@
 
     <!-- Clef/TimeSig Inference -->
     <vf-score width=800 systemsPerLine=2>
-      <vf-system connected>
+      <vf-system connector='brace'>
         <vf-stave clef='treble' timeSig='5/4' keySig='Bb'>
           <vf-voice stem='up'>
             C#5/q[id='here'], B4, A4/q., E4/8[id='there'], E4/q
@@ -113,9 +113,10 @@
             g3/q
           </vf-voice>
         </vf-stave>
-        <vf-curve from='here' to='there'></vf-curve>
       </vf-system>
 
+      <vf-curve from='here' to='there'></vf-curve>
+      
       <vf-system>
         <vf-stave>
           <vf-voice stem='up'>
@@ -197,7 +198,7 @@
         </vf-stave>
       </vf-system>  
 
-      <vf-system connected>
+      <vf-system connector='brace'>
         <vf-stave clef='treble' timeSig='6/8'>
           <vf-voice>
             <vf-beam>d4/8, d4, d4</vf-beam>
@@ -223,7 +224,7 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score>
+    </vf-score> 
 
     <!-- With Curve -->
     <vf-score width=600 systemsPerLine=2>
@@ -245,6 +246,17 @@
         </vf-stave>
       </vf-system>
       <vf-curve from='here' to='there'></vf-curve>    
+    </vf-score>
+
+    <vf-score x=10 y=10 width=360 height=140 renderer='canvas'>
+      <vf-system>
+        <vf-stave clef='treble' timeSig='3/4'>
+          <vf-voice stem='up'>
+            <vf-tuplet stem='up'>g4/q, a4, b4</vf-tuplet>
+            <vf-tuplet stem='up'>b4/8, a4, g4</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
     </vf-score>
 
   </body>
