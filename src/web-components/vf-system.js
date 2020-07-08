@@ -38,13 +38,13 @@ export class VFSystem extends HTMLElement {
     this.attachShadow({ mode:'open' });
     this.shadowRoot.innerHTML = `<slot></slot>`;
 
+    this.addEventListener('getPrevClef', this.getPrevClef);
+
     // The 'staveCreated' event is dispatched by a vf-stave when it has finished 
     // generating its voices. vf-system listens to this event so that it can add 
     // that vf-staves information to the staveToVoiceMap and update the 
     // numStaves counter. 
     this.addEventListener(StaveReadyEvent.eventName, this._staveCreated);
-
-    this.addEventListener('getPrevClef', this.getPrevClef);
   }
 
   connectedCallback() {
@@ -74,14 +74,22 @@ export class VFSystem extends HTMLElement {
   // TODO: remove num param 
   setupSystem(x, y, width, num) {
     this.x = x;
-    this.staveWidth = width;
+    this.y = y;
+
+    if (this.hasAttribute('connected')) {
+      this.x = x + 15;
+      this.staveWidth = width - 15;
+    } else {
+      this.x = x;
+      this.staveWidth = width;
+    }
+
     this.system = this._vf.System({ 
-      x: x,
-      y: y, 
-      width: width,
+      x: this.x,
+      y: this.y, 
+      width: this.staveWidth,
       factory: this._vf 
     });
-    console.log('system ' + num + ' setup');
 
     // Call createSystem at the end of the system setup to catch the case in 
     // which all of the vf-stave children dispatch events before setUpSystem 
@@ -137,7 +145,7 @@ export class VFSystem extends HTMLElement {
         const stave = this._vf.Stave({ 
           x: this.x, 
           y: this.y, 
-          width: this.width,
+          width: this.staveWidth,
           options: { 
             // Don't draw left and right bar lines because vf-system will add connectors
             left_bar: false,
@@ -145,17 +153,9 @@ export class VFSystem extends HTMLElement {
           },
         });
 
-        if (element.hasAttribute('clef')) {
-          stave.addClef(element.clef);
-        }
-
-        if (element.hasAttribute('timeSig')) {
-          stave.addTimeSignature(element.timeSig);
-        }
-        
-        if (element.hasAttribute('keySig')) {
-          stave.addKeySignature(element.keySig);
-        }
+        if (element.hasAttribute('clef')) stave.addClef(element.clef);
+        if (element.hasAttribute('timeSig')) stave.addTimeSignature(element.timeSig);
+        if (element.hasAttribute('keySig')) stave.addKeySignature(element.keySig);
 
         stave.clef = element.clef;
 

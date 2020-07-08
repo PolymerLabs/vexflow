@@ -111,7 +111,7 @@ export class VFScore extends HTMLElement {
     // The 'vf-stave-added' event is dispatched only by the vf-stave child. 
     this.addEventListener(StaveAddedEvent.eventName, this.setRegistry);
 
-    this.addEventListener('systemCreated', this.systemCreated);
+    // this.addEventListener('systemCreated', this.systemCreated);
     this.addEventListener('getPrevTimeSig', this.getPrevTimeSig);
     this.addEventListener('getPrevClefForStave', this.getPrevClef);
 
@@ -123,12 +123,10 @@ export class VFScore extends HTMLElement {
     this._startY = parseInt(this.getAttribute('y')) || this._startY;
     this._rendererType = this.getAttribute('renderer') || this._rendererType;
 
-    this.width = parseInt(this.getAttribute('width')) || this.width;
+    this._width = parseInt(this.getAttribute('width')) || this._width;
     this.height = parseInt(this.getAttribute('height'));
 
     this._systemsPerLine = parseInt(this.getAttribute('systemsPerLine')) || this._systemsPerLine;
-    this.staveWidth = Math.floor((this.width - this._startX - 1) / this._systemsPerLine);
-
 
     // Because connectedCallback could be called multiple times, safeguard 
     // against setting up the renderer, factory, etc. more than once. 
@@ -139,7 +137,37 @@ export class VFScore extends HTMLElement {
 
     // vf-score listens to the slotchange event so that it can detect its system 
     // and set it up accordingly
-    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystem);
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerSystems);
+  }
+
+  disconnectedCallback() {
+    // TODO (ywsang): Clean up any resources that may need to be cleaned up. 
+    this.shadowRoot.querySelector('slot').removeEventListener('slotchange', this.registerSystem);
+  }
+
+  static get observedAttributes() { return ['x', 'y', 'width', 'height', 'renderer'] }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    switch(name) {
+      case 'x':
+      case 'y':
+        // TODO (ywsang): Implement code to update the position of the vf-system
+        // children. 
+        break;
+      case 'width':
+        this._width = newValue;
+        // TODO (ywsang): Implement code to resize the renderer. Need to make 
+        // sure the renderer is already created!
+        break;
+      case 'height':
+        this._height = newValue;
+        // TODO (ywsang): Implement code to resize the renderer. Need to make 
+        // sure the renderer is already created!
+        break;
+      case 'renderer':
+        this._rendererType = newValue;
+        break;
+    }
   }
 
   /**
@@ -188,9 +216,6 @@ export class VFScore extends HTMLElement {
     this.totalNumSystems = systems.length;
 
     const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
-    const height = numLines*250 + 20;
-    this._renderer.resize(this.width, (this.height) ? this.height : height);
-    
     var systemsAdded = 0;
     var systemsAddedOnLine = 0;
     var lineNumber = 1;
@@ -199,52 +224,55 @@ export class VFScore extends HTMLElement {
     this.x = this._startX;
     this.y = this._startY;
 
+    // TODO (ywsang): Figure out how to account for any added connectors that 
+    // get drawn in front of the x position (e.g. brace, bracket)
+    this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
+
     systems.forEach(system => {
       if (lineNumber === numLines && !adjustedLastLine) {
         const systemsLeft = this.totalNumSystems - systemsAdded;
-        this.staveWidth = Math.floor((this.width - this._startX - 1)/systemsLeft);
+        this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
         adjustedLastLine = true;
       }
 
-      // console.log('setting up system with staveWidth = ' + this.staveWidth + ', x = ' + this.x + ', y = ' + this.y);
       systemsAdded++;
       system.setupSystem(this.x, this.y, this.staveWidth, systemsAdded);      
 
       this.x += this.staveWidth;
       systemsAddedOnLine++;
 
-      if (systemsAddedOnLine == this._systemsPerLine) {
-        this.x = this._startX;
-        this.y += 230;
+      if (systemsAddedOnLine === this._systemsPerLine) { // break to new line 
+        this.x = this._startX; // reset x position
+        this.y += this.getSystemLineHeight(system.childElementCount);
         systemsAddedOnLine = 0;  
         lineNumber++;
       }
     });
 
-    this.systemAdded('registerSystems');
+    if (this.totalNumSystems % this._systemsPerLine !== 0) this.y += this.getSystemLineHeight(systems[systemsAdded-1].childElementCount);
+    this._renderer.resize(this._width, (this.height) ? this.height : this.y);
+  }
+
+  getSystemLineHeight(stavesInSystem) {
+    return 130 * stavesInSystem;
   }
 
   systemCreated = () => {
-    this.systemsAdded++;
+    this._systemsAdded++;
     this.systemAdded('systemCreated');
   }
 
   systemAdded(callerName) {
-    console.log('systemAdded called from ' + callerName);
-    if (this.totalNumSystems === this.systemsAdded) {
-      console.log('systemAdded called from ' + callerName);
+    if (this.totalNumSystems === this._systemsAdded) {
       this.addSystemConnectors();
       this.addCurves();
-      console.log('drawing');
       this.vf.draw();
-      console.log('done!');
     }
   }
 
   addSystemConnectors() {
     const systems = this.vf.systems;
     const numSystems = systems.length;
-    console.log(numSystems);
 
     var i;
     for (i = 0; i < numSystems; i++) {
@@ -269,7 +297,7 @@ export class VFScore extends HTMLElement {
     const system = event.target.parentElement;
     const index = this.getIndexPosition(system);
     const prevSystem = this.getPrevSystem(index, system.parentElement.children);
-    event.target.timeSig = prevSystem.firstElementChild.timeSig;
+    event.target.timeSig = (prevSystem) ? prevSystem.firstElementChild.timeSig : '4/4';
   }
 
   /** Gets the clef of the stave at index = event.detail.staveIndex of the previous system */
@@ -278,8 +306,7 @@ export class VFScore extends HTMLElement {
     const staveIndex = event.detail.staveIndex;
     const systemIndex = this.getIndexPosition(event.target);
     const prevSystem = this.getPrevSystem(systemIndex, event.target.parentElement.children);
-    // const prevSystem = event.target.previousElementSibling;
-    event.target.children[staveIndex].clef = prevSystem.children[staveIndex].clef;
+    event.target.children[staveIndex].clef = (prevSystem) ? prevSystem.children[staveIndex].clef : 'treble';
   }
 
   getIndexPosition(element) {

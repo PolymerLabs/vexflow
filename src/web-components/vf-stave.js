@@ -48,16 +48,16 @@ export class VFStave extends HTMLElement {
     this.attachShadow({ mode:'open' });
     this.shadowRoot.innerHTML = `<slot></slot>`;
 
-    // The 'vf-voice-ready' event is dispatched by a vf-voice when it has 
-    // finished generating its notes. vf-stave listens to this event so that it 
-    // can get that vf-voice's notes and generate a Voice from it. 
-    this.addEventListener(VoiceReadyEvent.eventName, this.addVoice);
-
     // The 'vf-element-ready' event is dispatched by a vf-voice when it's added 
     // to the DOM. vf-stave listens to this event so that it can set the vf-voice's
     // EasyScore instance, since a single EasyScore instance is shared by a 
     // vf-stave and all its children. 
     this.addEventListener(ElementAddedEvent.eventName, this.setScore);
+
+    // The 'vf-voice-ready' event is dispatched by a vf-voice when it has 
+    // finished generating its notes. vf-stave listens to this event so that it 
+    // can get that vf-voice's notes and generate a Voice from it. 
+    this.addEventListener(VoiceReadyEvent.eventName, this.addVoice);
   }
 
   connectedCallback() {

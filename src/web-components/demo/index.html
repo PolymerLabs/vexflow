@@ -6,7 +6,7 @@
   <body>
     
     <!-- Simple Example: Canvas Renderer -->
-    <!-- <vf-score x=0 height=300 renderer='canvas'>
+    <vf-score x=0 height=300 renderer='canvas'>
       <vf-system>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice autoBeam>
@@ -20,10 +20,10 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score> -->
+    </vf-score>
 
     <!-- Two Systems, One Line -->
-    <!-- <vf-score systemsPerLine=2 width=800>
+    <vf-score systemsPerLine=2 width=800>
       <vf-system connected>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
@@ -51,10 +51,10 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score> -->
+    </vf-score>
     
     <!-- Wrapping Systems -->
-    <!-- <vf-score systemsPerLine=2 width=700>
+    <vf-score systemsPerLine=2 width=700>
       <vf-system connected>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
@@ -96,7 +96,7 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
-    </vf-score> -->
+    </vf-score>
 
     <!-- Clef/TimeSig Inference -->
     <vf-score width=800 systemsPerLine=2>
@@ -223,6 +223,28 @@
           </vf-voice>
         </vf-stave>
       </vf-system>
+    </vf-score>
+
+    <!-- With Curve -->
+    <vf-score width=600 systemsPerLine=2>
+      <vf-system>
+        <vf-stave>
+          <vf-voice stem='down' autoBeam>f5/4.[id='here'], e5/8, d5/8, d5/16, c5/16[id='there'], c5/16, c5/16, f5/16, f5/32, f5/32</vf-voice>
+        </vf-stave>
+        <vf-stave>
+          <vf-voice stem='down' autoBeam>f5/4.[id='here'], e5/8, d5/8, d5/16, c5/16[id='there'], c5/16, c5/16, f5/16, f5/32, f5/32</vf-voice>
+        </vf-stave>
+      </vf-system>
+
+      <vf-system>
+        <vf-stave>
+          <vf-voice stem='down' autoBeam>f5/4.[id='here'], e5/8, d5/8, d5/16, c5/16[id='there'], c5/16, c5/16, f5/16, f5/32, f5/32</vf-voice>
+        </vf-stave>
+        <vf-stave>
+          <vf-voice stem='down' autoBeam>f5/4.[id='here'], e5/8, d5/8, d5/16, c5/16[id='there'], c5/16, c5/16, f5/16, f5/32, f5/32</vf-voice>
+        </vf-stave>
+      </vf-system>
+      <vf-curve from='here' to='there'></vf-curve>    
     </vf-score>
 
   </body>

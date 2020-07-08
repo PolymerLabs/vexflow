@@ -142,6 +142,7 @@ export class VFVoice extends HTMLElement {
             break;
         }
       });
+
       this.elementAdded();
     }
   }
@@ -188,7 +189,7 @@ export class VFVoice extends HTMLElement {
       })
       
       // Dispatches event to vf-stave to create and add the voice to the stave
-      this.dispatchEvent(new VoiceReadyEvent(this.notes, this.beams));
+      this.dispatchEvent(new VoiceReadyEvent());
     }
   }
 

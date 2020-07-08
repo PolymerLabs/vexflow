@@ -5,7 +5,6 @@
 
 var VF = Vex.Flow;
 VF.Test.AutoBeamFormattingWebComponents = (function() {
-
   var AutoBeamFormattingWebComponents = {
     Start: function() {
       var runTests = VF.Test.runTests;
@@ -16,8 +15,8 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       runTests('More Simple Auto Beaming 0', AutoBeamFormattingWebComponents.moreSimple0);
       runTests('More Simple Auto Beaming 1', AutoBeamFormattingWebComponents.moreSimple1);
       // runTests('Odd Time - Guessing Default Beam Groups', AutoBeamFormattingWebComponents.autoOddBeamGroups); // groups are off
-      runTests('Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.simpleTuplets);
-      runTests('More Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.moreSimpleTuplets);
+      // runTests('Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.simpleTuplets);
+      // runTests('More Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.moreSimpleTuplets);
       // runTests('More Automatic Beaming', AutoBeamFormattingWebComponents.moreBeaming); -- groups are off
     },
 
@@ -75,7 +74,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       `;
       document.body.appendChild(document.importNode(template.content, true));
 
-      // how to test this? 
+      // TODO: figure out how to test this with web components?
       // var UP = VF.Stem.UP;
       // var DOWN = VF.Stem.DOWN;
       // equal(beams[0].stem_direction, UP);
@@ -87,7 +86,6 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
 
       ok(true, 'Web Components: Auto Beaming Applicator Test');
     },
-
 
     moreSimple0: function(options) {
       const template = document.createElement('template');
@@ -119,7 +117,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       ok(true, 'Web Components: Auto Beaming Applicator Test');
     },
 
-    // beam groups are off
+  // beam groups are off
     // autoOddBeamGroups: function(options) {
     //   const template = document.createElement('template');
     //   template.innerHTML = `
@@ -177,6 +175,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       document.body.appendChild(document.importNode(template.content, true));
       ok(true, 'Web Components: Auto Beaming Applicator Test');
     },
+  };
 
     // groups are diff
     // moreBeaming: function(options) {
@@ -202,31 +201,6 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
 
     //   ok(true, 'Auto Beam Applicator Test');
     // },
-
-    beamingWithSeveralGroups1: function(options) {
-      var vf = VF.Test.makeFactory(options);
-      var stave = vf.Stave();
-      var score = vf.EasyScore();
-
-      var voice = score.voice(score.notes(
-        'c4/8, g4/4, c5/8, g5, a5, a5, f5'
-      ), { time: '4/4' });
-
-      var beams = VF.Beam.applyAndGetBeams(voice, undefined, [new VF.Fraction(3, 8), new VF.Fraction(3, 8), new VF.Fraction(2, 8)]);
-
-      vf.Formatter()
-        .joinVoices([voice])
-        .formatToStave([voice], stave);
-
-      vf.draw();
-
-      beams.forEach(function(beam) {
-        return beam.setContext(vf.getContext()).draw();
-      });
-
-      ok(true, 'Auto Beam Applicator Test');
-    },
-  };
 
   return AutoBeamFormattingWebComponents;
 })();
