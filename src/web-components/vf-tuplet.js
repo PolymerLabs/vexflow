@@ -4,18 +4,26 @@ import './vf-voice';
 import ElementAddedEvent from './events/elementAddedEvent';
 
 export class VFTuplet extends HTMLElement {
+
+  beamed = false;
+  _score;
+  stemDirection = 'up';
+  location = 'above';
+
   constructor() {
     super();
-
-    this.beamed = false;
-    this._score = undefined;
   }
 
   connectedCallback() {
-    this.notesOccupied = this.getAttribute('notesOccupied');
     this.beamed = this.hasAttribute('beamed');
-    this.stemDirection = this.getAttribute('stem') || this.stemDirection; 
-    this.notesText = this.textContent;
+    this.location = this.getAttribute('location') || this.location;
+
+    if (this.getAttribute('stem')) {
+      this.stemDirection = this.getAttribute('stem');
+    } else {
+      const getParentStem = new Event('getStemDirection', { bubbles: true });
+      this.dispatchEvent(getParentStem);
+    }
 
     this.dispatchEvent(new ElementAddedEvent());
   }
@@ -34,15 +42,31 @@ export class VFTuplet extends HTMLElement {
   }
 
   createTuplet() {
-    this.createNotes(this.notesText, this.stemDirection);
+    this.createNotes(this.textContent, this.stemDirection);
+
+    const numNotes = (this.hasAttribute('numNotes')) ? this.getAttribute('numNotes') : this.notes.length;
+    const notesOccupied = this.getAttribute('notesOccupied') || 2;
+    const location = this.location === 'below' ? -1 : 1;
+    const bracketed = !this.beamed;
+
+    // Following the original VexFlow library:
+    // If the user specifies whether or not to draw the ratio, respect that.
+    // If not specified, default to drawing the ratio if the difference between 
+    // num_notes and notes_occupied is greater than 1.
+    var ratioed;
+    if (this.hasAttribute('ratioed')) {
+      ratioed = (this.getAttribute('ratioed') === 'true')
+    } else {
+      ratioed = numNotes - notesOccupied > 1;
+    }
 
     this.tuplet = this._score.tuplet(this.notes,
       { 
-        num_notes: (this.hasAttribute('numNotes')) ? this.getAttribute('numNotes') : this.notes.length,
-        notes_occupied: this.notesOccupied,
-        location: this.stemDirection === 'down' ? -1 : 1,
-        bracketed: !this.beamed,
-        ratioed: this.hasAttribute('ratioed'),
+        num_notes: numNotes,
+        notes_occupied: notesOccupied,
+        location: location,
+        bracketed: bracketed,
+        ratioed: ratioed,
       }
     );
 
@@ -54,7 +78,7 @@ export class VFTuplet extends HTMLElement {
     this.dispatchEvent(tupletCreatedEvent);
   }
 
-  createNotes(line, stemDirection) { // MOVE TO A SHARED FILE
+  createNotes(line, stemDirection) {
     this._score.set({ stem: stemDirection });
     const staveNotes = this._score.notes(line);
     this.notes = staveNotes;

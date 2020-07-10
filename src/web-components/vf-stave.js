@@ -84,7 +84,6 @@ export class VFStave extends HTMLElement {
     // vf-stave listens to the slotchange event so that it can detect its voices 
     // and establish how many voices it expects to receive events from. 
     this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.registerVoices);
-    // console.log('vf-stave connectedCallback')
   }
 
   disconnectedCallback() {

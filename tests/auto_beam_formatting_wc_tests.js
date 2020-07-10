@@ -15,8 +15,6 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       runTests('More Simple Auto Beaming 0', AutoBeamFormattingWebComponents.moreSimple0);
       runTests('More Simple Auto Beaming 1', AutoBeamFormattingWebComponents.moreSimple1);
       // runTests('Odd Time - Guessing Default Beam Groups', AutoBeamFormattingWebComponents.autoOddBeamGroups); // groups are off
-      // runTests('Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.simpleTuplets);
-      // runTests('More Simple Tuplet Auto Beaming', AutoBeamFormattingWebComponents.moreSimpleTuplets);
       // runTests('More Automatic Beaming', AutoBeamFormattingWebComponents.moreBeaming); -- groups are off
     },
 
@@ -107,7 +105,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       template.innerHTML = `
         <vf-score id=${options.scoreId} width=450 height=140 y=10 renderer='canvas'>
           <vf-system>
-            <vf-stave clef='treble' timeSig='4/4'>
+            <vf-stave timeSig='4/4'>
               <vf-voice autoBeam>c5/16, g5, c5, c5/r, c5/r, (c4 e4 g4), d4, a5, c4, g4, c5, b4/r, (c4 e4), b4/r, b4/r, a4</vf-voice>
             </vf-stave>
           </vf-system>  
@@ -116,7 +114,7 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       document.body.appendChild(document.importNode(template.content, true));
       ok(true, 'Web Components: Auto Beaming Applicator Test');
     },
-
+  };
   // beam groups are off
     // autoOddBeamGroups: function(options) {
     //   const template = document.createElement('template');
@@ -142,40 +140,6 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
     //   document.body.appendChild(document.importNode(template.content, true));
     //   ok(true, 'Web Components: Auto Beaming Applicator Test');
     // },
-
-    simpleTuplets: function(options) {
-      const template = document.createElement('template');
-      template.innerHTML = `
-        <vf-score id=${options.scoreId} width=450 height=140 y=10 renderer='canvas'>
-          <vf-system>
-            <vf-stave clef='treble' timeSig='4/4'>
-              <vf-voice autoBeam>c5/16, g5, c5, c5/r, c5/r, (c4 e4 g4), d4, a5, c4, g4, c5, b4/r, (c4 e4), b4/r, b4/r, a4</vf-voice>
-            </vf-stave>
-          </vf-system>  
-        </vf-score>
-      `;
-      document.body.appendChild(document.importNode(template.content, true));
-      ok(true, 'Web Components: Auto Beaming Applicator Test');
-    },
-
-    moreSimpleTuplets: function(options) {
-      const template = document.createElement('template');
-      template.innerHTML = `
-        <vf-score id=${options.scoreId} width=450 height=140 renderer='canvas'>
-          <vf-system>
-            <vf-stave clef='treble' timeSig='3/4'>
-              <vf-voice autoBeam>
-                <vf-tuplet stem='up'>d4/4, g4, c5</vf-tuplet>
-                g5/16, a5, a5, (c5 e5)
-              </vf-voice>
-            </vf-stave>
-          </vf-system>  
-        </vf-score>
-      `;
-      document.body.appendChild(document.importNode(template.content, true));
-      ok(true, 'Web Components: Auto Beaming Applicator Test');
-    },
-  };
 
     // groups are diff
     // moreBeaming: function(options) {

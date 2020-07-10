@@ -111,13 +111,10 @@ export class VFScore extends HTMLElement {
     // The 'vf-stave-added' event is dispatched only by the vf-stave child. 
     this.addEventListener(StaveAddedEvent.eventName, this.setRegistry);
 
-    // this.addEventListener('systemCreated', this.systemCreated);
     this.addEventListener('getPrevTimeSig', this.getPrevTimeSig);
     this.addEventListener('getPrevClefForStave', this.getPrevClef);
 
     this.addEventListener('vfCurveReady', this.setRegistry);
-
-    console.log('score with id = ' + this.getAttribute('id'));
   }
 
   connectedCallback() {
@@ -296,10 +293,10 @@ export class VFScore extends HTMLElement {
 
   systemCreated = () => {
     this._systemsAdded++;
-    this.systemAdded('systemCreated');
+    this.systemAdded();
   }
 
-  systemAdded(callerName) {
+  systemAdded() {
     if (this.totalNumSystems === this._systemsAdded) {
       this.addSystemConnectors();
       this.addCurves();

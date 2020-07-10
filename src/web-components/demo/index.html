@@ -4,6 +4,14 @@
     <script type="module" src='../index.js'></script>
   </head>
   <body>
+
+    <vf-score width=450 height=140 renderer='canvas'>
+      <vf-system>
+        <vf-stave clef='treble' timeSig='4/4'>
+          <vf-voice autoBeam>f5/8, e5, d5, c5/16, c5, d5/8, e5, f5, f5/32, f5, f5, f5</vf-voice>
+        </vf-stave>
+      </vf-system>  
+    </vf-score>
     
     <!-- Simple Example: Canvas Renderer -->
     <vf-score x=0 height=300 renderer='canvas'>
@@ -27,7 +35,7 @@
       <vf-system connector='brace'>
         <vf-stave clef='treble' timeSig='4/4' keySig='Bb'>
           <vf-voice stem='up'>
-            C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there']
           </vf-voice>
         </vf-stave>
         <vf-stave clef='bass' timeSig='4/4' keySig='Bb'>
@@ -41,7 +49,7 @@
       <vf-system x=410 width=350>
         <vf-stave clef='treble' x=410 width=350>
           <vf-voice stem='up'>
-            C#5/q[id='here'], B4, A4/q., E4/8[id='there']</vf-tuplet>
+            C#5/q[id='here'], B4, A4/q., E4/8[id='there']
           </vf-voice>
         </vf-stave>
         <vf-stave clef='bass' x=410 width=350>
@@ -176,9 +184,21 @@
       <vf-system>
         <vf-stave clef='treble' timeSig='9/4'>
           <vf-voice stem='up'>
-            <vf-tuplet stem='up' notesOccupied=3>f3/q[stem="up"], a5[stem="down"]</vf-tuplet>
-            <vf-tuplet stem='up' notesOccupied=3>a4/q, f3</vf-tuplet>
-            <vf-tuplet stem='up' notesOccupied=3>a4/q[stem="down"], c4[stem="down"]</vf-tuplet>
+            <vf-tuplet notesOccupied=3>f3/q, a5[stem="down"]</vf-tuplet>
+            <vf-tuplet notesOccupied=3>a4/q, f3</vf-tuplet>
+            <vf-tuplet notesOccupied=3>a4/q[stem="down"], c4[stem="down"]</vf-tuplet>
+          </vf-voice>
+        </vf-stave>
+      </vf-system>
+    </vf-score>
+
+    <!-- Tuplets w/ Lots of Options -->
+    <vf-score x=10 y=10 width=350 height=160 renderer='canvas'>
+      <vf-system>
+        <vf-stave timeSig='5/8'>
+          <vf-voice>
+            <vf-tuplet location='below' ratioed=true>f4/q, c4, g4</vf-tuplet>
+            <vf-tuplet location='below' ratioed=true notesOccupied=1 beamed>d5/8, g5, b4</vf-tuplet>
           </vf-voice>
         </vf-stave>
       </vf-system>
@@ -252,8 +272,8 @@
       <vf-system>
         <vf-stave clef='treble' timeSig='3/4'>
           <vf-voice stem='up'>
-            <vf-tuplet stem='up'>g4/q, a4, b4</vf-tuplet>
-            <vf-tuplet stem='up'>b4/8, a4, g4</vf-tuplet>
+            <vf-tuplet>g4/q, a4, b4</vf-tuplet>
+            <vf-tuplet>b4/8, a4, g4</vf-tuplet>
           </vf-voice>
         </vf-stave>
       </vf-system>

@@ -115,7 +115,7 @@ export class VFSystem extends HTMLElement {
    */
   _registerStaves = () => {
     const staves = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-STAVE');
-    this._numStaves += staves.length;
+    this._numStaves = staves.length;
     this.staveOrder = staves;
     this._createSystem();
   }

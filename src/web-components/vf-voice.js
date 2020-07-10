@@ -78,6 +78,7 @@ export class VFVoice extends HTMLElement {
 
     this.dispatchEvent(new ElementAddedEvent());
 
+    this.addEventListener('getStemDirection', this.setChildStem);
     this.addEventListener('tupletCreated', this.tupletCreated);
     this.addEventListener('beamCreated', this.beamCreated);
   }
@@ -225,6 +226,10 @@ export class VFVoice extends HTMLElement {
       this._vf.renderQ.push(beam);
     })
     return beams;
+  }
+
+  setChildStem = (event) => {
+    event.target.stemDirection = this.stem;
   }
 }
 
