@@ -3,10 +3,19 @@
 // 
 // This file implements `vf-voice`, the web component that resembles 
 // the `Voice` element. 
+// `vf-voice` is responsible for generating and/or gathering
+// all of the notes and beams that make up the voice, including those from its
+// child components, which may be `vf-tuplet`s and `vf-beam`s. 
+// Once all the notes and beams are created, `vf-voice` dispatches an event to
+// its parent `vf-stave` to signal that it's ready for the voice to be created
+// the voice.
 
 import Vex from '../index';
 import './vf-stave';
+import { createNotesFromText } from './utils';
+import BeamReadyEvent from './events/beamReadyEvent';
 import ElementAddedEvent from './events/elementAddedEvent';
+import TupletReadyEvent from './events/tupletReadyEvent';
 import VoiceReadyEvent from './events/voiceReadyEvent';
 
 const template = document.createElement('template');
@@ -59,17 +68,40 @@ export class VFVoice extends HTMLElement {
    */
   beams = [];
 
+  /**
+   * The number of vf-beam children that this voice has.
+   * @type {number}
+   * @private
+   */
+  _numBeams = 0;
+
+  /**
+   * The number of vf-tuplet children that this voice has.
+   * @type {number}
+   * @private
+   */
+  _numTuplets = 0;
+
+  /**
+   * A mapping of this voice's child nodes to their notes.
+   * Keys may be text content nodes, vf-tuplet nodes, or vf-beam nodes.
+   * @type {Map<Node, [Vex.Flow.StaveNote]>}
+   * @private
+   */
+  _elementToNotesMap = new Map();
+
+  /**
+   * A set representing the order of this voice's child nodes. 
+   * @type {Set<Node>}
+   * @private
+   */
+  _elementOrder = new Set();
+
   constructor() {
     super();
 
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(document.importNode(template.content, true));
-
-    // Defaults
-    this.numBeams = 0;
-    this.numTuplets = 0;
-    this.elementToNotesMap = new Map(); // map of textContent nodes/vf-tuplets/vf-beams to their notes
-    this.elementOrder = new Set();
   }
 
   connectedCallback() {
@@ -79,8 +111,12 @@ export class VFVoice extends HTMLElement {
     this.dispatchEvent(new ElementAddedEvent());
 
     this.addEventListener('getStemDirection', this.setChildStem);
-    this.addEventListener('tupletCreated', this.tupletCreated);
-    this.addEventListener('beamCreated', this.beamCreated);
+
+    // vf-voice listens to the TupletReadyEvent and BeamReadyEvent events so 
+    // it can detect when its child tuplets and beams have created their notes 
+    // and establish how many tuplets and beams it expects to receive events from. 
+    this.addEventListener(TupletReadyEvent.eventName, this.tupletCreated);
+    this.addEventListener(BeamReadyEvent.eventName, this.beamCreated);
   }
 
   static get observedAttributes() { return ['stem', 'autoBeam'] }
@@ -123,21 +159,21 @@ export class VFVoice extends HTMLElement {
           case '#text':
             const notesText = node.textContent.trim();
             if (notesText) {
-              const notes = this._createNotesFromText(notesText);
-              this.elementOrder.add(node);
-              this.elementToNotesMap.set(node, notes);
+              const notes = createNotesFromText(this._score, notesText, this.stem);
+              this._elementOrder.add(node);
+              this._elementToNotesMap.set(node, notes);
               if (this.autoBeam) {
                 this.beams.push(...this._autoGenerateBeams(notes));
               }
             }
             break;
           case 'VF-TUPLET':
-            this.numTuplets++;
-            this.elementOrder.add(node);
+            this._numTuplets++;
+            this._elementOrder.add(node);
             break;
           case 'VF-BEAM':
-            this.numBeams++;
-            this.elementOrder.add(node);
+            this._numBeams++;
+            this._elementOrder.add(node);
             break;
           default:
             break;
@@ -150,62 +186,33 @@ export class VFVoice extends HTMLElement {
 
   tupletCreated = (event) => {
     const tuplet = event.target;
-    this.elementToNotesMap.set(tuplet, tuplet.tuplet);
+    this._elementToNotesMap.set(tuplet, tuplet.tuplet);
     if (tuplet.beam) {
       this.beams.push(...tuplet.beam);
     }
-    this.numTuplets--;
+    this._numTuplets--;
     this.elementAdded(tuplet);
   }
 
   beamCreated = (event) => {
     const beam = event.target;
-    this.elementToNotesMap.set(beam, beam.notes);
+    this._elementToNotesMap.set(beam, beam.notes);
     this.beams.push(...beam.beam);
-    this.numBeams--;
+    this._numBeams--;
     this.elementAdded(beam);
-  }
-
-  /** For debugging what's in the map */
-  iterateOverMap() {
-    const it = this.elementToNotesMap.values();
-    const keysIt = this.elementToNotesMap.keys();
-    let notes = it.next();
-    let key = keysIt.next();
-    while (!notes.done) {
-      console.log(key);
-      console.log('value: ' + notes);
-      console.log(notes);
-      notes = it.next();
-      key = keysIt.next();
-    }
   }
 
   elementAdded() {
     // Don't fire notesAndBeamsCreatedEvent until all the tuplets & beams come back
-    if (this.numTuplets === 0 && this.numBeams === 0) {
+    if (this._numTuplets === 0 && this._numBeams === 0) {
       // Order notes according to their slot order
-      this.elementOrder.forEach(element => {
-        this.notes.push(...this.elementToNotesMap.get(element));
+      this._elementOrder.forEach(element => {
+        this.notes.push(...this._elementToNotesMap.get(element));
       })
       
       // Dispatches event to vf-stave to create and add the voice to the stave
       this.dispatchEvent(new VoiceReadyEvent());
     }
-  }
-
-  /**
-   * Generates notes based on the text content of this vf-voice element. 
-   * Utlizes the EasyScore API Grammar & Parser. 
-   * 
-   * @param {String} text - The string to parse and create notes from. 
-   * @return {[Vex.Flow.StaveNote]} - The notes that were generated from the text. 
-   * @private
-   */
-  _createNotesFromText(text) {
-    this._score.set({ stem: this.stem });
-    const staveNotes = this._score.notes(text);
-    return staveNotes;
   }
 
   /**

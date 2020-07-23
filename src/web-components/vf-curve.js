@@ -29,11 +29,6 @@ export class VFCurve extends HTMLElement {
   }
 
   addCurve() {
-    console.log('from, id = ' + this.startId);
-    console.log(this.getNoteFromId(this.startId));
-    console.log('to, id = ' + this.endId);
-    console.log(this.getNoteFromId(this.endId));
-
     this._vf.Curve({
       from: this.getNoteFromId(this.startId),
       to: this.getNoteFromId(this.endId),
