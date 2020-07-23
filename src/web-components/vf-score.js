@@ -212,7 +212,7 @@ export class VFScore extends HTMLElement {
   /** "Registers" the vf-system children and lays them out */
   registerSystems = () => {
     const systems = this.shadowRoot.querySelector('slot').assignedElements().filter(e => e.nodeName === 'VF-SYSTEM');
-    this.totalNumSystems = systems.length;
+    const totalNumSystems = systems.length;
 
     const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
     this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
@@ -220,8 +220,7 @@ export class VFScore extends HTMLElement {
     this.x = this._startX;
     this.y = this._startY;
 
-    // TODO (ywsang): Figure out how to account for any added connectors that 
-    // get drawn in front of the x position (e.g. brace, bracket)
+    // VERSION OF LOOP THAT USES A LOT OF VARIABLES
     // this.staveWidth = Math.floor((this._width - this._startX - 1) / this._systemsPerLine);
     // const numLines = Math.ceil(this.totalNumSystems / this._systemsPerLine);
     // var systemsAdded = 0;
@@ -259,11 +258,11 @@ export class VFScore extends HTMLElement {
     var i;
     var lineNumber = 1;
     var adjustedLastLine = false;
-    for (i = 1; i <= this.totalNumSystems; i++) {
+    for (i = 1; i <= totalNumSystems; i++) {
       const system = systems[i-1];
 
       if (lineNumber === numLines && !adjustedLastLine) {
-        const systemsLeft = this.totalNumSystems - (i - 1);
+        const systemsLeft = totalNumSystems - (i - 1);
         this.staveWidth = Math.floor((this._width - this._startX - 1) / systemsLeft);
         adjustedLastLine = true;
       }
@@ -279,12 +278,15 @@ export class VFScore extends HTMLElement {
     }
 
     // If the last line was not filled, account for its height 
-    if (this.totalNumSystems % this._systemsPerLine !== 0) {
-      const lastSystem = systems[this.totalNumSystems - 1];
+    if (totalNumSystems % this._systemsPerLine !== 0) {
+      const lastSystem = systems[totalNumSystems - 1];
       this.y += this.getSystemLineHeight(lastSystem.childElementCount);
     }
 
     this._renderer.resize(this._width, (this.height) ? this.height : this.y);
+
+    this.totalNumSystems = totalNumSystems;
+    this.createScore();
   }
 
   getSystemLineHeight(stavesInSystem) {
@@ -293,10 +295,10 @@ export class VFScore extends HTMLElement {
 
   systemCreated = () => {
     this._systemsAdded++;
-    this.systemAdded();
+    this.createScore();
   }
 
-  systemAdded() {
+  createScore() {
     if (this.totalNumSystems === this._systemsAdded) {
       this.addSystemConnectors();
       this.addCurves();

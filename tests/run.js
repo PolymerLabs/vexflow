@@ -1,9 +1,4 @@
 VF.Test.run = function() {
-  // VF.Test.WebComponents.Start();
-  // VF.Test.BeamWebComponents.Start();
-  // VF.Test.TupletWebComponents.Start();
-  // VF.Test.RestsWebComponents.Start();
-
   VF.Test.Accidental.Start();
   VF.Test.StaveNote.Start();
   VF.Test.Voice.Start();
@@ -24,6 +19,7 @@ VF.Test.run = function() {
   VF.Test.TabStave.Start();
   VF.Test.TabSlide.Start();
   VF.Test.Beam.Start();
+  VF.Test.BeamWebComponents.Start();
   VF.Test.Barline.Start();
   VF.Test.AutoBeamFormatting.Start();
   VF.Test.AutoBeamFormattingWebComponents.Start();
@@ -45,10 +41,12 @@ VF.Test.run = function() {
   VF.Test.StaveHairpin.Start();
   VF.Test.Rhythm.Start();
   VF.Test.Tuplet.Start();
+  VF.Test.TupletWebComponents.Start();
   VF.Test.BoundingBox.Start();
   VF.Test.Strokes.Start();
   VF.Test.StringNumber.Start();
   VF.Test.Rests.Start();
+  VF.Test.RestsWebComponents.Start();
   VF.Test.ThreeVoices.Start();
   VF.Test.Curve.Start();
   VF.Test.TextNote.Start();
@@ -65,6 +63,7 @@ VF.Test.run = function() {
   VF.Test.Registry.Start();
   VF.Test.BachDemo.Start();
   VF.Test.GlyphNote.Start();
+  VF.Test.WebComponents.Start();
 };
 
 module.exports = VF.Test;

@@ -115,56 +115,57 @@ VF.Test.AutoBeamFormattingWebComponents = (function() {
       ok(true, 'Web Components: Auto Beaming Applicator Test');
     },
   };
+
   // beam groups are off
-    // autoOddBeamGroups: function(options) {
-    //   const template = document.createElement('template');
-    //   template.innerHTML = `
-    //     <vf-score id=${options.scoreId} width=450 height=600 renderer='canvas'>
-    //       <vf-system>
-    //         <vf-stave clef='treble' timeSig='5/4'>
-    //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4, c4, d4, a5, c4, g4</vf-voice>
-    //         </vf-stave>
-    //       </vf-system>  
-    //       <vf-system>
-    //         <vf-stave clef='treble' timeSig='5/8'>
-    //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4</vf-voice>
-    //         </vf-stave>
-    //       </vf-system>  
-    //       <vf-system>
-    //         <vf-stave clef='treble' timeSig='13/16'>
-    //           <vf-voice autoBeam>c5/16, g5, c5, b4, b4, c5, g5, c5, b4, b4, c5, b4, b4</vf-voice>
-    //         </vf-stave>
-    //       </vf-system>  
-    //     </vf-score>
-    //   `;
-    //   document.body.appendChild(document.importNode(template.content, true));
-    //   ok(true, 'Web Components: Auto Beaming Applicator Test');
-    // },
+  // autoOddBeamGroups: function(options) {
+  //   const template = document.createElement('template');
+  //   template.innerHTML = `
+  //     <vf-score id=${options.scoreId} width=450 height=600 renderer='canvas'>
+  //       <vf-system>
+  //         <vf-stave clef='treble' timeSig='5/4'>
+  //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4, c4, d4, a5, c4, g4</vf-voice>
+  //         </vf-stave>
+  //       </vf-system>
+  //       <vf-system>
+  //         <vf-stave clef='treble' timeSig='5/8'>
+  //           <vf-voice autoBeam>c5/8, g5, c5, b4, b4</vf-voice>
+  //         </vf-stave>
+  //       </vf-system>
+  //       <vf-system>
+  //         <vf-stave clef='treble' timeSig='13/16'>
+  //           <vf-voice autoBeam>c5/16, g5, c5, b4, b4, c5, g5, c5, b4, b4, c5, b4, b4</vf-voice>
+  //         </vf-stave>
+  //       </vf-system>
+  //     </vf-score>
+  //   `;
+  //   document.body.appendChild(document.importNode(template.content, true));
+  //   ok(true, 'Web Components: Auto Beaming Applicator Test');
+  // },
 
-    // groups are diff
-    // moreBeaming: function(options) {
-    //   var vf = VF.Test.makeFactory(options);
-    //   var stave = vf.Stave();
-    //   var score = vf.EasyScore();
+  // groups are diff
+  // moreBeaming: function(options) {
+  //   var vf = VF.Test.makeFactory(options);
+  //   var stave = vf.Stave();
+  //   var score = vf.EasyScore();
 
-    //   var voice = score.voice(score.notes(
-    //     'c4/8, g4/4, c5/8., g5/16, a5/4, a5/16, (c5 e5)/16, a5/8'
-    //   ), { time: '9/8' });
+  //   var voice = score.voice(score.notes(
+  //     'c4/8, g4/4, c5/8., g5/16, a5/4, a5/16, (c5 e5)/16, a5/8'
+  //   ), { time: '9/8' });
 
-    //   var beams = VF.Beam.applyAndGetBeams(voice, undefined, VF.Beam.getDefaultBeamGroups('9/8'));
+  //   var beams = VF.Beam.applyAndGetBeams(voice, undefined, VF.Beam.getDefaultBeamGroups('9/8'));
 
-    //   vf.Formatter()
-    //     .joinVoices([voice])
-    //     .formatToStave([voice], stave);
+  //   vf.Formatter()
+  //     .joinVoices([voice])
+  //     .formatToStave([voice], stave);
 
-    //   vf.draw();
+  //   vf.draw();
 
-    //   beams.forEach(function(beam) {
-    //     return beam.setContext(vf.getContext()).draw();
-    //   });
+  //   beams.forEach(function(beam) {
+  //     return beam.setContext(vf.getContext()).draw();
+  //   });
 
-    //   ok(true, 'Auto Beam Applicator Test');
-    // },
+  //   ok(true, 'Auto Beam Applicator Test');
+  // },
 
   return AutoBeamFormattingWebComponents;
 })();

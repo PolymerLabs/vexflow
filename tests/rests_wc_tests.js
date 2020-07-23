@@ -7,7 +7,6 @@ Vex.Flow.Test.RestsWebComponents = (function() {
       Vex.Flow.Test.runTests('Auto Align Rests - Tuplets Stems Up', RestsWebComponents.tupletsUp);
       Vex.Flow.Test.runTests('Auto Align Rests - Single Voice (Default)', RestsWebComponents.staveRests);
       Vex.Flow.Test.runTests('Auto Align Rests - Multi Voice (Default)', RestsWebComponents.multi);
-      
     },
 
     beamsUp: function(options) {

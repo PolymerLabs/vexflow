@@ -101,7 +101,7 @@ Vex.Flow.Test.TupletWebComponents = (function() {
       ok(true, 'Web Components: Tuplet - Bottom Ratioed');
     },
 
-    // Middle tuplet (beam within tuplet) is off 
+    // Middle tuplet (beam within tuplet) is off
     complex: function(options) {
       const template = document.createElement('template');
       template.innerHTML = `
