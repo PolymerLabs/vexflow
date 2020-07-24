@@ -13,6 +13,7 @@ import Vex from '../index';
 import './vf-voice';
 import { createBeamForNotes, createNotesFromText } from './utils';
 import ElementAddedEvent from './events/elementAddedEvent';
+import GetParentStemEvent from './events/getParentStemEvent';
 import TupletReadyEvent from './events/tupletReadyEvent';
 
 export class VFTuplet extends HTMLElement {
@@ -81,8 +82,7 @@ export class VFTuplet extends HTMLElement {
     if (this.getAttribute('stem')) {
       this.stemDirection = this.getAttribute('stem');
     } else {
-      const getParentStem = new Event('getStemDirection', { bubbles: true });
-      this.dispatchEvent(getParentStem);
+      this.dispatchEvent(new GetParentStemEvent());
     }
 
     this.dispatchEvent(new ElementAddedEvent());
