@@ -49,7 +49,7 @@
     "qunit": "^2.9.3",
     "raphael": "^2.3.0",
     "webpack": "^4.42.1",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^5.2.4"
   },
   "scripts": {
     "start": "grunt stage",
